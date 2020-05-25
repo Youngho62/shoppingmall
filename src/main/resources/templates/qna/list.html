@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:insert="~{fragment/header::header}"></th:block>
+
+<div class="container mt-30" >
+    <div>
+        <div class="header-panel" style="height:1cm">
+            <div class="alert alert-info"><strong style="font-size: 30px">QnA</strong></div>
+            <div class="pull-right mb-20"><a class="label label-primary" style="font-size:20px;" th:href="@{register}">글쓰기</a></div>
+        </div>
+        <div class="panel-body" th:with="result=${result.result}">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr class="table-primary">
+                    <th width="100px">번호</th>
+                    <th width="100px">문의유형</th>
+                    <th width="500px">제목</th>
+                    <th width="200px">작성자</th>
+                    <th width="200px">작성일자</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="qna:${result.content}">
+                    <td>[[${qna.qno}]]</td>
+                    <td>[[${qna.qnaKinds}]]</td>
+                    <td><a th:href="${qna.qno}" class="boardLink">[[${qna.title}]]</a></td>
+                    <td>[[${qna.writer}]]</td>
+                    <td class="center">[[${#dates.format(qna.regdate,'yyyy-MM-dd')}]]</td>
+                </tr>
+                </tbody>
+            </table>
+            <!--검색창-->
+            <div class="navbar-form pull-left">
+                <div style="float: left">
+                    <select class='form-control' id='searchType'  >
+                        <option>검색</option>
+                        <option value='t' th:selected="${pageVO.type} =='t'">제목</option>
+                        <option value='c' th:selected="${pageVO.type} =='c'">내용</option>
+                        <option value='w' th:selected="${pageVO.type} =='w'">작성자</option>
+                        <option value="k" th:selected="${pageVO.type} =='k'">문의유형</option>
+                    </select>
+                </div>
+                <div id="qnaKind" style="float: left">
+                </div>
+                <div id="seachInput" style="float: left">
+                    <input type='text' class="form-control-lg" id='searchKeyword' placeholder='Search' th:value='${pageVO.keyword}'>
+                </div>
+                <div style="float: left">
+                    <button class="btn btn-lg btn-primary pull-left" id='searchBtn'><i class="glyphicon glyphicon-search"></i></button>
+                </div>
+
+            </div>
+            <!--검색창 끝-->
+        </div>
+        <!--페이지네이션-->
+        <nav>
+            <div>
+                <ul class="pagination"  >
+                    <li class="page-item" th:if="${result.currentPageNum!=1}"><a th:href="1">맨앞</a></li>
+
+                    <li class="page-item" th:if="${result.prevPage}" >
+                        <a th:href="${result.prevPage.pageNumber} + 1">PREV</a>
+                    </li>
+                    <li class="page-item" th:each="p:${result.pageList}" th:classappend="${p.pageNumber==result.currentPageNum-1}?active:''">
+                        <a th:href="${p.pageNumber}+1">[[${p.pageNumber}+1]]</a>
+                    </li>
+                    <li class="page-item" th:if="${result.nextPage}">
+                        <a th:href="${result.nextPage.pageNumber} + 1">NEXT</a>
+                    </li>
+                    <li class="page-item" th:if="${!(result.currentPageNum.equals(result.totalPageNum))}">
+                        <a th:href="${result.totalPageNum}">맨뒤</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!--페이지네이션 끝-->
+        <form id='f1' th:action="@{list}" method="get">
+            <input type='hidden' name='page' th:value=${result.currentPageNum}>
+            <input type='hidden' name='size' th:value=${result.currentPage.pageSize}>
+            <input type='hidden' name='type' th:value=${pageVO.type}>
+            <input type='hidden' name='keyword' th:value=${pageVO.keyword}>
+        </form>
+    </div>
+</div>
+
+<th:block th:insert="~{fragment/footer::footer}"></th:block>
+<script th:inline="javascript">
+    $(window).load(function () {
+        var msg=[[${msg}]]
+        if(msg=="success"){
+            alert("작성을 완료하였습니다.");
+        }else if(msg=="modifysuccess"){
+            alert("수정을 완료하였습니다.");
+        }else if(msg=="deletesuccess"){
+            alert("삭제를 완료하였습니다.")
+        }
+
+
+    });
+    $(document).ready(function () {
+        var formObj = $("#f1");
+
+        $(".pagination a").click(function(e) {
+            e.preventDefault();
+            formObj.find('[name="page"]').val($(this).attr('href'));
+            formObj.submit();
+        });
+        $("#searchType").change(function () {
+            var typeStr = $("#searchType").find(":selected").val();
+            var str=null;
+            if(typeStr=='k'){
+                $("#searchKeyword").remove();
+                str="<select class='form-control' id='qnaKeyword'  >\n" +
+                    "    <option value='배송'>배송</option>\n" +
+                    "    <option value='주문'>주문</option>\n" +
+                    "    <option value='회원'>회원</option>\n" +
+                    "    <option value='결제'>결제</option>\n" +
+                    "</select>";
+                if($("#qnaKind").val()=="") {
+                    $("#qnaKind").html(str);
+                }
+            }else{
+                $("#qnaKind").remove();
+                str="<input type='text' class=\"form-control-lg\" id='searchKeyword' placeholder='Search' th:value='${pageVO.keyword}'>";
+                if($("#seachInput").val()=="") {
+                    $("#seachInput").html(str);
+                }
+            }
+        });
+
+        $("#searchBtn").click(function(e){
+
+            var typeStr = $("#searchType").find(":selected").val();
+            var keywordStr=null;
+            if(typeStr=='k'){
+                keywordStr=$("#qnaKeyword").val();
+            }else{
+                keywordStr = $("#searchKeyword").val();
+            }
+
+
+            console.log(typeStr, "" , keywordStr);
+
+            formObj.find("[name='type']").val(typeStr);
+            formObj.find("[name='keyword']").val(keywordStr);
+            formObj.find("[name='page']").val("1");
+            formObj.submit();
+        });
+        $(".boardLink").click(function (e) {
+            e.preventDefault();
+            var boardNo=$(this).attr("href");
+
+            formObj.attr("action",[[@{'/boards/view'}]]);
+            formObj.append("<input type='hidden' name='bno' value='"+boardNo+"'>");
+            formObj.submit();
+        });
+
+    });
+</script>
+</html>
