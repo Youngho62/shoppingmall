@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:insert="~{fragment/header::header}"></th:block>
+<style>
+    .form-control, .form-group, .btn{
+        font-size:16px;
+    }
+</style>
+<div class="container mt-30" id="main">
+    <div>
+        <div class="header-panel mb-30" style="height:1cm">
+            <div class="alert alert-info"><strong style="font-size: 30px">QnA</strong></div>
+        </div>
+        <div class="panel-body mt-50">
+            <div class="form-group " >
+                <label for="qno">번호</label>
+                <input type="text"  class="form-control col-1" id="qno" name="qno" th:value="${vo.qno}" th:readonly="readonly">
+            </div>
+            <div style="display: inline-block" class="form-group">
+                <label class="pull-left">문의유형</label>
+                <input type="text" class="form-control" id="qnaKinds" name="qnaKinds" th:value="${vo.qnaKinds}" th:readonly="readonly">
+            </div>
+            <div class="form-group">
+                <label for="title">제목</label>
+                <input type="text" class="form-control" id="title" name="title" th:value="${vo.title}" th:readonly="readonly">
+            </div>
+            <div class="form-group">
+                <label for="content">내용</label>
+                <textarea name="content" id="content" rows="10" class="form-control" th:text="${vo.content}" th:readonly="readonly"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="writer">작성자</label>
+                <input name="writer" id="writer" class="form-control col-3" th:value="${vo.writer}" th:readonly="readonly" >
+            </div>
+            <div class="form-group">
+                <label for="regdate">작성시간</label>
+                <input name="regdate" id="regdate" class="form-control col-3" th:value="${#dates.format(vo.regdate,'yyyy-MM-dd')}" th:readonly="readonly" >
+            </div>
+
+            <!--버튼-->
+            <div>
+                <th:block th:if="${#authentication.principal.username==vo.writer}">
+                    <a th:href="@{ modify(page=${pageVO.page},size=${pageVO.size},type=${pageVO.type},keyword=${pageVO.keyword},qno=${vo.qno})}"
+                       class="btn btn-warning" id='goModBtn'>수정/삭제</a>
+                    <a th:href="@{ list(page=${pageVO.page},size=${pageVO.size},type=${pageVO.type},keyword=${pageVO.keyword},qno=${vo.qno})}"
+                       class="btn btn-primary">목록</a>
+                </th:block>
+                <a th:href="@{/qna/reply(qno=${vo.qno})}" class="btn btn-primary pull-right" id='addReplyBtn'>답글작성</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:insert="~{fragment/footer::footer}"></th:block>
+</html>

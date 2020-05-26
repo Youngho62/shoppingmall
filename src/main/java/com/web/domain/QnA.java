@@ -8,13 +8,14 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tbl_qna")
 @EqualsAndHashCode(of = "qno")
-@ToString
+@ToString(exclude = "replies")
 public class QnA {
 
     @Id
@@ -28,4 +29,6 @@ public class QnA {
     @CreationTimestamp
     private Timestamp regdate;
 
+    @OneToMany(mappedBy = "qnA")
+    private List<QnAReply> replies;
 }
