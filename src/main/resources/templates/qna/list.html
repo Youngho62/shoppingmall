@@ -16,15 +16,17 @@
                     <th width="100px">번호</th>
                     <th width="100px">문의유형</th>
                     <th width="500px">제목</th>
-                    <th width="200px">작성자</th>
-                    <th width="200px">작성일자</th>
+                    <th width="70px">조회수</th>
+                    <th width="180px">작성자</th>
+                    <th width="120px">작성일자</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="qna:${result.content}">
                     <td>[[${qna.qno}]]</td>
-                    <td>[[${qna.qnaKinds}]]</td>
+                    <td>[[${(qna.qnaKinds=='답글'?'--':'')+qna.qnaKinds}]]</td>
                     <td><a th:href="${qna.qno}" class="boardLink">[[${qna.title}]]</a></td>
+                    <td>[[${qna.qHit}]]</td>
                     <td>[[${qna.writer}]]</td>
                     <td class="center">[[${#dates.format(qna.regdate,'yyyy-MM-dd')}]]</td>
                 </tr>
@@ -94,6 +96,8 @@
             alert("수정을 완료하였습니다.");
         }else if(msg=="deletesuccess"){
             alert("삭제를 완료하였습니다.")
+        }else if(msg=="replysuccess"){
+            alert("답글을 작성하였습니다.")
         }
 
 

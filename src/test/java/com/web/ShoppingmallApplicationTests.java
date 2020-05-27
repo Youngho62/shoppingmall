@@ -40,7 +40,8 @@ class ShoppingmallApplicationTests {
     @Test
     public void testList1() {
         qnARepository.findAll().forEach(qnA -> {
-            log.info(qnA.toString());
+            qnA.setQGroup(Math.toIntExact(qnA.getQno()));
+            qnARepository.save(qnA);
         });
     }
 

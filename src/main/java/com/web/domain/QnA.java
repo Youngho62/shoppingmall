@@ -4,18 +4,18 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tbl_qna")
 @EqualsAndHashCode(of = "qno")
-@ToString(exclude = "replies")
+@ToString
 public class QnA {
 
     @Id
@@ -25,10 +25,14 @@ public class QnA {
     private String title;
     private String writer;
     private String content;
+    @ColumnDefault("0")
+    private int qHit;
+    private int qGroup;
+    @ColumnDefault("0")
+    private int qStep;
+    private int qIndent;
 
     @CreationTimestamp
     private Timestamp regdate;
 
-    @OneToMany(mappedBy = "qnA")
-    private List<QnAReply> replies;
 }

@@ -13,25 +13,25 @@
         <div class="header-panel mb-30" style="height:1cm">
             <div class="alert alert-info"><strong style="font-size: 30px">QnA</strong></div>
         </div>
-        <form role="form" method="post" action="/qna/register">
+        <form role="form" method="post" action="/qna/reply">
             <div class="panel-body mt-50">
-                <div style="display: inline-block" class="form-group">
-                    <label class="pull-left">문의유형</label>
-                    <select class='form-control' name="qnaKinds" id='qnaKeyword'>
-                        <option value='배송'>배송</option>
-                        <option value='주문'>주문</option>
-                        <option value='회원'>회원</option>
-                        <option value='결제'>결제</option>
-                        <option value='기타'>기타</option>
-                    </select>
+                <div class="form-group">
+                    <label for="qnaKinds">문의유형</label>
+                    <input type="text" class="form-control col-1" id="qnaKinds" name="qnaKinds" value="답글" readonly="readonly">
                 </div>
                 <div class="form-group">
                     <label for="title">제목</label>
-                    <input type="text" class="form-control" id="title" name="title" >
+                    <input type="text" class="form-control" id="title" name="title">
                 </div>
                 <div class="form-group">
                     <label for="content">내용</label>
                     <textarea name="content" id="content" rows="10" class="form-control"></textarea>
+                    <textarea name="content2" rows="10" class="form-control"
+                              th:text="${'------Original Message------&#10;'+
+                              'from:'+qnA.writer +'&#10;'+
+                              'To:'+#authentication.principal.username+'&#10;'+
+                              'Title: '+qnA.title+'&#10;'+
+                              'Content: '+qnA.content}" readonly="readonly"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -41,8 +41,10 @@
 
                 <!--버튼-->
                 <div>
+                    <input type="hidden" name="replyQno" th:value="${qnA.qno}">
+                    <input type="hidden" name="qGroup" th:value="${qnA.qGroup}">
                     <input type="hidden" th:name="${_csrf.getParameterName()}" th:value="${_csrf.token}">
-                    <button type="submit" class="btn btn-success">확인</button>
+                    <button id="summ" type="submit" class="btn btn-success">확인</button>
                 </div>
             </div>
         </form>
