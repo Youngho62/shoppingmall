@@ -1,6 +1,10 @@
 package com.web;
 
+import com.web.domain.Product;
+import com.web.domain.ProductFiles;
 import com.web.domain.QnA;
+import com.web.repository.ProductFilesRepository;
+import com.web.repository.ProductRepository;
 import com.web.repository.QnARepository;
 import lombok.extern.java.Log;
 import org.junit.jupiter.api.Test;
@@ -14,6 +18,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
@@ -23,16 +29,20 @@ import java.util.stream.IntStream;
 class ShoppingmallApplicationTests {
     @Autowired
     QnARepository qnARepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    ProductFilesRepository productFilesRepository;
 
     @Test
     public void insert(){
-        IntStream.range(1,50).forEach(i->{
-            QnA qna=new QnA();
-            qna.setTitle("Test: 결제 문의 "+i);
-            qna.setWriter("rladudgh337");
-            qna.setContent("Test: 결제 문의 내용"+i);
-            qna.setQnaKinds("결제");
-            qnARepository.save(qna);
+        IntStream.range(181,210).forEach(i->{
+            Product product=new Product();
+            product.setCategory("가구");
+            product.setDescription("Test setDescription입니다.."+i);
+            product.setName("Test상품"+i);
+            product.setPrice(5000);
+            productRepository.save(product);
         });
 
     }

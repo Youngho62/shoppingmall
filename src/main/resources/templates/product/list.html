@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:insert="~{fragment/header::header}"></th:block>
+
+<div class="shop_sidebar_area">
+    <!-- ##### Single Widget ##### -->
+    <div class="widget catagory mb-50">
+        <!-- Widget Title -->
+        <h6 class="widget-title mb-30">Catagories</h6>
+        <!--  Catagories  -->
+        <div class="catagories-menu">
+            <ul id="categoryId">
+                <li th:class="${pageVO.keyword==''?'active':''}"><a href="#">ALL</a></li>
+                <li th:class="${pageVO.keyword=='가공식품'?'active':''}"><a href="#">가공식품</a></li>
+                <li th:class="${pageVO.keyword=='신선식품'?'active':''}"><a href="#">신선식품</a></li>
+                <li th:class="${pageVO.keyword=='건강식품'?'active':''}"><a href="#">건강식품</a></li>
+                <li th:class="${pageVO.keyword=='생활/주방'?'active':''}"><a href="#">생활/주방</a></li>
+                <li th:class="${pageVO.keyword=='유아동'?'active':''}"><a href="#">유아동</a></li>
+                <li th:class="${pageVO.keyword=='가전/디지털'?'active':''}"><a href="#">가전/디지털</a></li>
+                <li th:class="${pageVO.keyword=='가구'?'active':''}"><a href="#">가구</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="amado_product_area section-padding-100">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <div class="product-topbar d-xl-flex align-items-end justify-content-between">
+                    <!-- 이미지 보이기, 숨기기-->
+                    <div class="total-products">
+                        <div class="view d-flex">
+                            <a id="showImg" href="#"><i class="fa fa-th-large" aria-hidden="true"></i></a>
+                            <a id="hideImg" href="#"><i class="fa fa-bars" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                    <!-- 리스트 내 이미지 갯수 -->
+                    <div class="product-sorting d-flex">
+                        <div class="view-product d-flex align-items-center">
+                            <p>View</p>
+                            <div id="viewCnt">
+                                <select name="select" id="viewProduct">
+                                    <option value="10" th:selected="${pageVO.size==10?'selected':false}">10</option>
+                                    <option value="20" th:selected="${pageVO.size==20?'selected':false}">20</option>
+                                    <option value="30" th:selected="${pageVO.size==30?'selected':false}">30</option>
+                                    <option value="30" th:selected="${pageVO.size==40?'selected':false}">40</option>
+                                    <option value="50" th:selected="${pageVO.size==50?'selected':false}">50</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="pull-right">
+                            <a href="/product/register"><span style="font-size: 14px" class="btn btn-primary">상품등록</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" th:with="result=${result.result}">
+
+            <!-- 상품목록 -->
+            <div class="col-12 col-sm-6 col-md-12 col-xl-6" th:each="product:${result.content}">
+                <div class="single-product-wrapper">
+                    <input type="hidden" id="pno" th:value="${product.pno}">
+                    <!-- 대표 사진 -->
+                    <div class="product-img" th:each="files:${product.files}">
+                        <div th:if="${files.mainPic}">
+                            <a th:href="@{/product/view(pno=${product.pno})}">
+                                <img width="460" height="570" th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}" alt="">
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- 상품 이름,가격란 -->
+                    <div class="product-description d-flex align-items-center justify-content-between">
+                        <div class="product-meta-data">
+                            <div class="line"></div>
+                            <a style="text-decoration:none" th:href="@{/product/view(pno=${product.pno})}">
+                                <p class="product-price">[[${'&#8361;'+product.price}]]</p>
+                                <h5>[[${product.name}]]</h5>
+                            </a>
+                        </div>
+                        <!-- 장바구니 -->
+                        <div class="ratings-cart text-right">
+                            <div class="cart">
+                                <a style="color: grey" href="/cart/" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="/img/core-img/cart.png" alt=""><br>Add</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--페이지네이션-->
+        <div class="row">
+            <div class="col-12">
+                <!-- Pagination -->
+                <nav aria-label="navigation">
+                    <ul class="pagination justify-content-end mt-50">
+                        <li class="page-item" th:if="${result.currentPageNum!=1}"><a class="page-link" th:href="1"> << </a></li>
+                        <li class="page-item" th:if="${result.prevPage}" >
+                            <a class="page-link" th:href="${result.prevPage.pageNumber} + 1"> < </a>
+                        </li>
+                        <li class="page-item" th:each="p:${result.pageList}" th:classappend="${p.pageNumber==result.currentPageNum-1}?active:''">
+                            <a class="page-link" th:href="${p.pageNumber}+1">[[${p.pageNumber}+1]]</a>
+                        </li>
+                        <li class="page-item" th:if="${result.nextPage}">
+                            <a class="page-link" th:href="${result.nextPage.pageNumber} + 1"> > </a>
+                        </li>
+                        <li class="page-item" th:if="${!(result.currentPageNum.equals(result.totalPageNum))}">
+                            <a class="page-link" th:href="${result.totalPageNum}"> >> </a>
+                        </li>
+                    </ul>
+                </nav>
+                <form id='f1' th:action="@{list}" method="get">
+                    <input type='hidden' name='page' th:value=${result.currentPageNum}>
+                    <input type='hidden' name='size' th:value=${result.currentPage.pageSize}>
+                    <input type='hidden' name='keyword' th:value=${pageVO.keyword}>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:insert="~{fragment/footer::footer}"></th:block>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        var formObj = $("#f1");
+
+        $(".pagination a").click(function(e) {
+            e.preventDefault();
+            formObj.find('[name="page"]').val($(this).attr('href'));
+            formObj.submit();
+        });
+
+        $("#categoryId").on("click","li a",function(e){
+            e.preventDefault();
+            var keywordStr = $(this).text();
+            keywordStr=(keywordStr=='ALL'?'':keywordStr);
+
+            formObj.find("[name='keyword']").val(keywordStr);
+            formObj.find("[name='page']").val("1");
+            formObj.submit();
+        });
+
+        $("#hideImg").on("click",function () {
+            $(".product-img").hide(1000);
+        });
+        $("#showImg").on("click",function () {
+            $(".product-img").show(1000);
+        });
+        $("#viewProduct").change(function () {
+            var size=$(this).val();
+            var page=[[${pageVO.page}]];
+            var keyword=[[${pageVO.keyword}]];
+            location.href='list?page='+page+'&size='+size+'&keyword='+keyword;
+        });
+    });
+</script>
+</html>

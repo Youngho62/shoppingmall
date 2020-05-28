@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:insert="~{fragment/header::header}"></th:block>
+
+<!-- Product Details Area Start -->
+<div class="single-product-area section-padding-100 clearfix">
+    <div class="container-fluid">
+
+        <div class="row">
+            <div class="col-12">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mt-50">
+                        <li class="breadcrumb-item"><a href="/">Home</a></li>
+                        <li class="breadcrumb-item"><a href="/product/list">상품</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/product/list(keyword=${product.category})}">[[${product.category}]]</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">[[${product.name}]]</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+
+        <div class="row">
+            <!--이미지-->
+            <div class="col-12 col-lg-7">
+                <div class="single_product_thumb">
+                    <!--sub 이미지를 클릭하면 main 이미지와 자리 바꿈-->
+                    <div id="product_details_slider" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner" th:each="files:${product.files}">
+                            <div class="carousel-item active" th:if="${files.mainPic}">
+                                <img id="imgMain" class="w-100" th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}">
+                            </div>
+                        </div>
+                        <div th:each="files:${product.files}">
+                            <ul id="imgUl" th:if="${!files.mainPic}">
+                                <li style="float:left;">
+                                    <img th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}">
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-5">
+                <div class="single_product_desc">
+                    <!-- Product Meta Data -->
+                    <div class="product-meta-data">
+                        <div class="line"></div>
+                        <p class="product-price">[[${product.price+'&#8361;'}]]</p>
+                        <a th:href="@{/product/view(${product.pno})}">
+                            <h6>[[${product.name}]]</h6>
+                        </a>
+                    </div>
+
+                    <div class="short_overview my-5">
+                        <p>[[${product.description}]]</p>
+                    </div>
+
+                    <!-- Add to Cart Form -->
+                    <form class="cart clearfix" method="post">
+                        <div class="cart-btn d-flex mb-50">
+                            <p>갯수</p>
+                            <div class="quantity">
+                                <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-caret-down" aria-hidden="true"></i></span>
+                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
+                                <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-caret-up" aria-hidden="true"></i></span>
+                            </div>
+                        </div>
+                        <button type="submit" name="addtocart" value="5" class="btn amado-btn">Add to cart</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Product Details Area End -->
+
+<th:block th:insert="~{fragment/footer::footer}"></th:block>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $("#imgUl").on("click","li img",function () {
+            var imgSub=$(this).attr("src");
+            var imgMain=$("#imgMain").attr("src");
+
+            $(this).attr("src",imgMain);
+            $("#imgMain").attr("src",imgSub);
+        });
+    });
+</script>
+</html>
