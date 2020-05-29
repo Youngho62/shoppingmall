@@ -10,6 +10,12 @@
         <div class="row">
             <div class="col-12">
                 <nav aria-label="breadcrumb">
+                    <a th:href="@{ list(page=${pageVO.page},size=${pageVO.size},keyword=${pageVO.keyword},pno=${product.pno})}"
+                       class="btn btn-lg btn-outline-primary pull-right">목록</a>
+                    <th:block th:if="${#authentication.principal.userRole=='[ADMIN]'}">
+                    <a th:href="@{ modify(page=${pageVO.page},size=${pageVO.size},keyword=${pageVO.keyword},pno=${product.pno})}"
+                       class="btn btn-lg btn-outline-warning pull-right" id='goModBtn'>수정/삭제</a>
+                    </th:block>
                     <ol class="breadcrumb mt-50">
                         <li class="breadcrumb-item"><a href="/">Home</a></li>
                         <li class="breadcrumb-item"><a href="/product/list">상품</a></li>
@@ -28,13 +34,17 @@
                     <div id="product_details_slider" class="carousel slide" data-ride="carousel">
                         <div class="carousel-inner" th:each="files:${product.files}">
                             <div class="carousel-item active" th:if="${files.mainPic}">
-                                <img id="imgMain" class="w-100" th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}">
+                                <a class="gallery_img" th:href="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}">
+                                    <img id="imgMain" class="btn btn-outline-warning w-100"
+                                         th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}">
+                                </a>
                             </div>
                         </div>
-                        <div th:each="files:${product.files}">
-                            <ul id="imgUl" th:if="${!files.mainPic}">
-                                <li style="float:left;">
-                                    <img th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}">
+                        <div>
+                            <ul id="imgUl">
+                                <li style="float:left;" class="mt-4 mr-3" th:each="files:${product.files}">
+                                    <img class="btn btn-outline-warning" style="width: 200px; height: 200px;"
+                                         th:if="${!files.mainPic}" th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}">
                                 </li>
                             </ul>
                         </div>
@@ -46,10 +56,13 @@
                     <!-- Product Meta Data -->
                     <div class="product-meta-data">
                         <div class="line"></div>
-                        <p class="product-price">[[${product.price+'&#8361;'}]]</p>
-                        <a th:href="@{/product/view(${product.pno})}">
+                        <p class="product-price">[[${'&#8361;'+product.price}]]</p>
+                        <a th:href="@{/product/view(pno=${product.pno})}">
                             <h6>[[${product.name}]]</h6>
                         </a>
+                        <div>
+                            <p>[[${product.pHit+' view'}]]</p>
+                        </div>
                     </div>
 
                     <div class="short_overview my-5">
@@ -82,6 +95,7 @@
         $("#imgUl").on("click","li img",function () {
             var imgSub=$(this).attr("src");
             var imgMain=$("#imgMain").attr("src");
+            var imgMainThumb=$(".gallery_img").attr("href",imgSub);
 
             $(this).attr("src",imgMain);
             $("#imgMain").attr("src",imgSub);

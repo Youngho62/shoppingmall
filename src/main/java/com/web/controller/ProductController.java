@@ -1,7 +1,6 @@
 package com.web.controller;
 
 import com.web.domain.Product;
-import com.web.domain.QnA;
 import com.web.repository.ProductFilesRepository;
 import com.web.repository.ProductRepository;
 import com.web.vo.PageMaker;
@@ -62,6 +61,51 @@ public class ProductController {
         }
         productRepository.save(product);
         rttr.addFlashAttribute("msg","success");
+        return "redirect:/product/list";
+    }
+
+    @GetMapping("/modify")
+    public void modify(Long pno,@ModelAttribute("pageVO")PageVO pageVO,Model model){
+        productRepository.findById(pno).ifPresent(product -> model.addAttribute("product",product));
+    }
+    @Transactional
+    @PostMapping("/modify")
+    public String modifyPost(Product product, PageVO vo, RedirectAttributes rttr ){
+        productRepository.findById(product.getPno()).ifPresent( origin ->{
+            if(product.getFiles()!=null){
+                productFilesRepository.deleteAllByProduct(origin);
+                product.getFiles().forEach(file->{
+                    file.setProduct(product);
+                    productFilesRepository.save(file);
+                });
+            }
+            origin.setName(product.getName());
+            origin.setPrice(product.getPrice());
+            origin.setCategory(product.getCategory());
+            origin.setUpdateDate(product.getUpdateDate());
+            origin.setDescription(product.getDescription());
+            productRepository.save(origin);
+            rttr.addFlashAttribute("msg", "modifysuccess");
+            rttr.addAttribute("pno", origin.getPno());
+        });
+
+        rttr.addAttribute("page", vo.getPage());
+        rttr.addAttribute("size", vo.getSize());
+        rttr.addAttribute("keyword", vo.getKeyword());
+
+        return "redirect:/product/view";
+    }
+    @Transactional
+    @PostMapping("/delete")
+    public String delete(Long pno, PageVO vo, RedirectAttributes rttr ){
+        productFilesRepository.deleteAllByProduct(productRepository.findById(pno).get());
+        productRepository.deleteById(pno);
+        rttr.addFlashAttribute("msg", "deletesuccess");
+        //페이징과 검색했던 결과로 이동하는 경우
+        rttr.addAttribute("page", vo.getPage());
+        rttr.addAttribute("size", vo.getSize());
+        rttr.addAttribute("keyword", vo.getKeyword());
+
         return "redirect:/product/list";
     }
 

@@ -51,9 +51,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="pull-right">
-                            <a href="/product/register"><span style="font-size: 14px" class="btn btn-primary">상품등록</span></a>
-                        </div>
+                        <a href="/product/register"><span style="font-size: 14px" class="btn btn-lg btn-light">상품등록</span></a>
                     </div>
                 </div>
             </div>
@@ -68,7 +66,7 @@
                     <!-- 대표 사진 -->
                     <div class="product-img" th:each="files:${product.files}">
                         <div th:if="${files.mainPic}">
-                            <a th:href="@{/product/view(pno=${product.pno})}">
+                            <a class="viewLink" th:href="${product.pno}">
                                 <img width="460" height="570" th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}" alt="">
                             </a>
                         </div>
@@ -86,7 +84,8 @@
                         <!-- 장바구니 -->
                         <div class="ratings-cart text-right">
                             <div class="cart">
-                                <a style="color: grey" href="/cart/" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="/img/core-img/cart.png" alt=""><br>Add</a>
+                                <p class="mb-0" >[[${product.pHit+' view'}]]</p>
+                                <a class="mt-0" style="color: grey" href="/cart/" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="/img/core-img/cart.png" alt=""><br>Add</a>
                             </div>
                         </div>
                     </div>
@@ -125,6 +124,16 @@
 </div>
 <th:block th:insert="~{fragment/footer::footer}"></th:block>
 <script th:inline="javascript">
+    $(window).load(function () {
+        var msg=[[${msg}]]
+        if(msg=="success"){
+            alert("상품등록을 완료하였습니다.");
+        }else if(msg=="modifysuccess"){
+            alert("상품수정을 완료하였습니다.");
+        }else if(msg=="deletesuccess"){
+            alert("상품삭제를 완료하였습니다.")
+        }
+    });
     $(document).ready(function () {
         var formObj = $("#f1");
 
@@ -133,7 +142,14 @@
             formObj.find('[name="page"]').val($(this).attr('href'));
             formObj.submit();
         });
+        $(".viewLink").click(function (e) {
+            e.preventDefault();
+            var productNo=$(this).attr("href");
 
+            formObj.attr("action",[[@{'/product/view'}]]);
+            formObj.append("<input type='hidden' name='pno' value='"+productNo+"'>");
+            formObj.submit();
+        });
         $("#categoryId").on("click","li a",function(e){
             e.preventDefault();
             var keywordStr = $(this).text();
