@@ -64,10 +64,10 @@
                 <div class="single-product-wrapper">
                     <input type="hidden" id="pno" th:value="${product.pno}">
                     <!-- 대표 사진 -->
-                    <div class="product-img" th:each="files:${product.files}">
-                        <div th:if="${files.mainPic}">
+                    <div class="product-img">
+                        <div>
                             <a class="viewLink" th:href="${product.pno}">
-                                <img width="460" height="570" th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}" alt="">
+                                <img width="460" height="570" th:src="@{/files/display(fileName=${product.mainPic})}" alt="">
                             </a>
                         </div>
                     </div>
@@ -77,7 +77,7 @@
                         <div class="product-meta-data">
                             <div class="line"></div>
                             <a style="text-decoration:none" th:href="@{/product/view(pno=${product.pno})}">
-                                <p class="product-price">[[${'&#8361;'+product.price}]]</p>
+                                <p th:data-idx="${productStat.size}"th:with="i=${productStat.index}" th:id="price+${i}" class="product-price">[[${product.price}]]</p>
                                 <h5>[[${product.name}]]</h5>
                             </a>
                         </div>
@@ -85,7 +85,13 @@
                         <div class="ratings-cart text-right">
                             <div class="cart">
                                 <p class="mb-0" >[[${product.pHit+' view'}]]</p>
-                                <a class="mt-0" style="color: grey" href="/cart/" data-toggle="tooltip" data-placement="left" title="Add to Cart"><img src="/img/core-img/cart.png" alt=""><br>Add</a>
+                                <a sec:authorize="isAuthenticated()" class="addCart mt-0" th:data-pno="${product.pno}"
+                                   style="color: grey" th:href="@{/cart/list(uNum=${#authentication.principal.uNum})}"
+                                   data-toggle="tooltip" data-placement="left" title="Add to Cart">
+                                    <img src="/img/core-img/cart.png" alt=""><br>Add</a>
+                                <a sec:authorize="isAnonymous()" class="addCart mt-0" th:data-pno="${product.pno}"
+                                   style="color: grey" href="/users/loginForm" data-toggle="tooltip" data-placement="left" title="Add to Cart">
+                                    <img src="/img/core-img/cart.png" alt=""><br>Add</a>
                             </div>
                         </div>
                     </div>
@@ -134,6 +140,14 @@
             alert("상품삭제를 완료하였습니다.")
         }
     });
+    var size=$(".product-price").attr("data-idx");
+    for(var i=0;i<size;i++){
+        var price=numberWithCommas($("#price"+i).text());
+        $("#price"+i).text("￦ "+price)
+    }
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
     $(document).ready(function () {
         var formObj = $("#f1");
 
@@ -171,6 +185,30 @@
             var page=[[${pageVO.page}]];
             var keyword=[[${pageVO.keyword}]];
             location.href='list?page='+page+'&size='+size+'&keyword='+keyword;
+        });
+    });
+</script>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $(".addCart").on("click",function (e) {
+            e.preventDefault();
+            var pno= $(this).attr("data-pno");
+            var uNum= [[${#authentication.principal.uNum}]];
+            $.ajax({
+                type:'post',
+                url:'/cart/addCart',
+                data: {pno:pno,uNum:uNum},
+                success:function (result) {
+                    alert(result);
+                }
+            });
+
+            var result = confirm("장바구니에 추가되었습니다. 장바구니로 이동하겠습니까?");
+            if(result){
+                location.href="/cart/list?uNum="+uNum;
+            }else {
+
+            }
         });
     });
 </script>

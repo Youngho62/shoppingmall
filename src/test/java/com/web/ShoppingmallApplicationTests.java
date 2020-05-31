@@ -46,6 +46,17 @@ class ShoppingmallApplicationTests {
         });
 
     }
+    @Test
+    public void asdf(){
+        productRepository.findAll().forEach(product -> {
+            productFilesRepository.findProductFilesByProduct(product).forEach(productFiles -> {
+                if(productFiles.isMainPic()){
+                    product.setMainPic(productFiles.getUploadUrl()+"\\"+productFiles.getUuid()+"_"+productFiles.getFileName());
+                }
+            });
+            productRepository.save(product);
+        });
+    }
 
     @Test
     public void testList1() {

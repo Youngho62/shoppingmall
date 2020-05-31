@@ -14,75 +14,41 @@
                 <div class="cart-table clearfix">
                     <table class="table table-responsive">
                         <thead>
-                        <tr>
-                            <th></th>
-                            <th>Name</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
+                        <tr style="text-align: center">
+                            <th width="200px"></th>
+                            <th width="240px" style="font-size: 16px">상품이름</th>
+                            <th width="150px"style="font-size: 16px;">가격</th>
+                            <th width="120px" style="font-size: 16px;">갯수</th>
+                            <th width="150px" style="font-size: 16px;">총합</th>
+                            <th width="40px" style="font-size: 16px;">삭제</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                        <tr style="text-align: center" th:each="cart:${carts}" th:with="product=${cart.product}, i=${cartStat.index}">
                             <td class="cart_product_img">
-                                <a href="#"><img src="/img/bg-img/cart1.jpg" alt="Product"></a>
+                                <a th:href="@{/product/view(pno=${product.pno})}"><img th:src="@{/files/display(fileName=${product.mainPic})}" alt="Product"></a>
                             </td>
-                            <td class="cart_product_desc">
-                                <h5>White Modern Chair</h5>
+                            <td style="vertical-align: middle;" class="cart_product_desc">
+                                <h5 style="color:gray">[[${product.name}]]</h5>
                             </td>
-                            <td class="price">
-                                <span>$130</span>
+                            <td style="vertical-align: middle;" class="price">
+                                <span th:id="${'price'+i}" style="color: #fbb710;line-height: 1;" th:value="${product.price}"></span>
                             </td>
-                            <td class="qty">
+                            <td style="vertical-align: middle;" class="qty">
                                 <div class="qty-btn d-flex">
                                     <p>Qty</p>
-                                    <div class="quantity">
-                                        <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                        <input type="number" class="qty-text" id="qty" step="1" min="1" max="300" name="quantity" value="1">
-                                        <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                    <div class="quantity" th:with="i=${cartStat.index}">
+                                        <span class="qty-minus" th:data-idx="${i}"><i class="fa fa-minus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="number" class="qty-text" th:id="${'qty'+i}" name="quantity" th:value="${cart.count}">
+                                        <span class="qty-plus" th:data-idx="${i}"><i class="fa fa-plus" aria-hidden="true"></i></span>
                                     </div>
                                 </div>
                             </td>
-                        </tr>
-                        <tr>
-                            <td class="cart_product_img">
-                                <a href="#"><img src="/img/bg-img/cart2.jpg" alt="Product"></a>
+                            <td style="vertical-align: middle;" class="price">
+                                <span th:id="${'priceAmount'+i}" style="color: #fbb710;line-height: 1;" th:value="${(cart.count)*(product.price)}"></span>
                             </td>
-                            <td class="cart_product_desc">
-                                <h5>Minimal Plant Pot</h5>
-                            </td>
-                            <td class="price">
-                                <span>$10</span>
-                            </td>
-                            <td class="qty">
-                                <div class="qty-btn d-flex">
-                                    <p>Qty</p>
-                                    <div class="quantity">
-                                        <span class="qty-minus" onclick="var effect = document.getElementById('qty2'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                        <input type="number" class="qty-text" id="qty2" step="1" min="1" max="300" name="quantity" value="1">
-                                        <span class="qty-plus" onclick="var effect = document.getElementById('qty2'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="cart_product_img">
-                                <a href="#"><img src="/img/bg-img/cart3.jpg" alt="Product"></a>
-                            </td>
-                            <td class="cart_product_desc">
-                                <h5>Minimal Plant Pot</h5>
-                            </td>
-                            <td class="price">
-                                <span>$10</span>
-                            </td>
-                            <td class="qty">
-                                <div class="qty-btn d-flex">
-                                    <p>Qty</p>
-                                    <div class="quantity">
-                                        <span class="qty-minus" onclick="var effect = document.getElementById('qty3'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                        <input type="number" class="qty-text" id="qty3" step="1" min="1" max="300" name="quantity" value="1">
-                                        <span class="qty-plus" onclick="var effect = document.getElementById('qty3'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
-                                    </div>
-                                </div>
+                            <td style="vertical-align: middle;">
+                                <span th:data-cno="${cart.cno}" class="btn btn-lg btn-outline-warning delbtn">삭제</span>
                             </td>
                         </tr>
                         </tbody>
@@ -93,9 +59,9 @@
                 <div class="cart-summary">
                     <h5>Cart Total</h5>
                     <ul class="summary-table">
-                        <li><span>subtotal:</span> <span>$140.00</span></li>
-                        <li><span>delivery:</span> <span>Free</span></li>
-                        <li><span>total:</span> <span>$140.00</span></li>
+                        <li><span>전체 가격:</span> <span id="total" style="color: #fbb710;line-height: 1;" th:value="${amount}"></span></li>
+                        <li><span>배송비:</span> <span id="ship" style="color: #fbb710;line-height: 1;">[[${amount>1000000?'무료':'2,500 ￦'}]]</span></li>
+                        <li><span>total:</span> <span id="totalShip" style="color: #fbb710;line-height: 1;"th:value="${amount>1000000?amount:amount+2500}"></span></li>
                     </ul>
                     <div class="cart-btn mt-100">
                         <a href="/cart" class="btn amado-btn w-100">Checkout</a>
@@ -106,4 +72,83 @@
     </div>
 </div>
 <th:block th:insert="~{fragment/footer::footer}"></th:block>
+<script th:inline="javascript">
+    var total=numberWithCommas([[${amount}]]);
+    $("#total").text(total+" ￦");
+    var totalShip=numberWithCommas($("#totalShip").attr("value"));
+    $("#totalShip").text(totalShip+" ￦");
+
+    var size=[[${carts.size()}]];
+    for(var i=0;i<size;i++){
+        var price=numberWithCommas($("#price"+i).attr("value"));
+        $("#price"+i).text(price+" ￦");
+        var priceAmount=numberWithCommas($("#priceAmount"+i).attr("value"));
+        $("#priceAmount"+i).text(priceAmount+" ￦");
+    }
+    $(window).load(function () {
+        var msg=[[${msg}]]
+        if(msg=="deletesuccess"){
+            alert("장바구니에서 삭제되었습니다.");
+        }
+
+    });
+    $(document).ready(function () {
+        var total=$("#total").attr("value");
+        $(".qty-minus").click(function () {
+            var idx=$(this).attr('data-idx');
+            var effect = document.getElementById('qty'+idx);
+            var qty = effect.value;
+            var price=$("#price"+idx).attr("value");
+            if(!isNaN(qty)&&qty>0)effect.value--;
+            $.ajax({
+                type:'get',
+                url:'/cart/amount',
+                data: {qty:qty, price:price, opt:0},
+                success:function (result) {
+                    if(result>=0){total=(total*1)-(price*1)};
+                    result=result<0?0:result;
+                    $("#priceAmount"+idx).text(numberWithCommas(result)+" ￦");
+                    $("#total").text(numberWithCommas(total)+" ￦");
+                    total*1>1000000?$("#ship").text("무료"):$("#ship").text("2,500 ￦");
+                    total*1>1000000?$("#totalShip").text(numberWithCommas(total)+" ￦"):$("#totalShip").text(numberWithCommas(total*1+2500)+" ￦");
+                }
+            });
+        });
+        $(".qty-plus").click(function () {
+            var idx=$(this).attr('data-idx');
+            var effect = document.getElementById('qty'+idx);
+            var qty = effect.value;
+            var price=$("#price"+idx).attr("value");
+            if(!isNaN(qty))effect.value++;
+            $.ajax({
+                type:'get',
+                url:'/cart/amount',
+                data: {qty:qty, price:price,opt:1},
+                success:function (result) {
+                    $("#priceAmount"+idx).text(numberWithCommas(result)+" ￦");
+                    $("#total").text(numberWithCommas((total*1)+(price*1))+" ￦");
+                    total=(total*1)+(price*1);
+                    total*1>1000000?$("#ship").text("무료"):$("#ship").text("2,500 ￦");
+                    total*1>1000000?$("#totalShip").text(numberWithCommas(total)+" ￦"):$("#totalShip").text(numberWithCommas(total*1+2500)+" ￦");
+                }
+            });
+        });
+        $(".delbtn").on("click",function () {
+            var cno=$(this).attr("data-cno");
+            $.ajax({
+                type:'delete',
+                url:'/cart/delete',
+                data: {cno:cno},
+                success:function (result) {
+                    location.href="/cart/list?uNum="+[[${#authentication.principal.uNum}]];
+                }
+            });
+        });
+    });
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+</script>
+
 </html>

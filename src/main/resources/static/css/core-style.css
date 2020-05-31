@@ -625,7 +625,7 @@ img {
       font-size: 30px;
       margin-bottom: 30px;
       color: #242424; }
-    .main-content-wrapper .cart-table-area table thead {
+/*    .main-content-wrapper .cart-table-area table thead {
       width: 100%;
       display: block; }
       .main-content-wrapper .cart-table-area table thead tr {
@@ -665,7 +665,7 @@ img {
           -ms-flex: 0 0 25%;
           flex: 0 0 25%;
           width: 25%;
-          max-width: 25%; }
+          max-width: 25%; }*/
           .main-content-wrapper .cart-table-area table tbody tr td h5 {
             font-size: 16px;
             color: #252525; }

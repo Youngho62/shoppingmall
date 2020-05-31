@@ -13,8 +13,8 @@
                     <a th:href="@{ list(page=${pageVO.page},size=${pageVO.size},keyword=${pageVO.keyword},pno=${product.pno})}"
                        class="btn btn-lg btn-outline-primary pull-right">목록</a>
                     <th:block th:if="${#authentication.principal.userRole=='[ADMIN]'}">
-                    <a th:href="@{ modify(page=${pageVO.page},size=${pageVO.size},keyword=${pageVO.keyword},pno=${product.pno})}"
-                       class="btn btn-lg btn-outline-warning pull-right" id='goModBtn'>수정/삭제</a>
+                        <a th:href="@{ modify(page=${pageVO.page},size=${pageVO.size},keyword=${pageVO.keyword},pno=${product.pno})}"
+                           class="btn btn-lg btn-outline-warning pull-right" id='goModBtn'>수정/삭제</a>
                     </th:block>
                     <ol class="breadcrumb mt-50">
                         <li class="breadcrumb-item"><a href="/">Home</a></li>
@@ -32,11 +32,11 @@
                 <div class="single_product_thumb">
                     <!--sub 이미지를 클릭하면 main 이미지와 자리 바꿈-->
                     <div id="product_details_slider" class="carousel slide" data-ride="carousel">
-                        <div class="carousel-inner" th:each="files:${product.files}">
-                            <div class="carousel-item active" th:if="${files.mainPic}">
-                                <a class="gallery_img" th:href="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active">
+                                <a class="gallery_img" th:href="@{/files/display(fileName=${product.mainPic})}">
                                     <img id="imgMain" class="btn btn-outline-warning w-100"
-                                         th:src="@{/files/display(fileName=${files.uploadUrl+'/'+files.uuid+'_'+files.fileName})}">
+                                         th:src="@{/files/display(fileName=${product.mainPic})}">
                                 </a>
                             </div>
                         </div>
@@ -56,7 +56,7 @@
                     <!-- Product Meta Data -->
                     <div class="product-meta-data">
                         <div class="line"></div>
-                        <p class="product-price">[[${'&#8361;'+product.price}]]</p>
+                        <p class="product-price">[[${product.price}]]</p>
                         <a th:href="@{/product/view(pno=${product.pno})}">
                             <h6>[[${product.name}]]</h6>
                         </a>
@@ -91,6 +91,12 @@
 
 <th:block th:insert="~{fragment/footer::footer}"></th:block>
 <script th:inline="javascript">
+    var price=numberWithCommas($(".product-price").text());
+    $(".product-price").text("￦ "+price);
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     $(document).ready(function () {
         $("#imgUl").on("click","li img",function () {
             var imgSub=$(this).attr("src");

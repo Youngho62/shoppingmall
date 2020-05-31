@@ -17,4 +17,6 @@ public interface ProductFilesRepository extends CrudRepository<ProductFiles,Long
     List<ProductFiles> getOldFiles(String yesterdayFolder);
 
     ProductFiles findProductFilesByUuid(String uuid);
+
+    List<ProductFiles> findProductFilesByProduct(Product product);
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.transaction.Transactional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Controller
 @RequestMapping("/product")
@@ -52,17 +53,34 @@ public class ProductController {
     }
     @Transactional
     @PostMapping("/register")
-    public String registerPost(@ModelAttribute("product") Product product, RedirectAttributes rttr){
-        if(product.getFiles()!=null){
-            product.getFiles().forEach(productFiles ->{
+    public String registerPost(@ModelAttribute("product") Product product, RedirectAttributes rttr) {
+        //업로드 파일이 존재하면
+        if (product.getFiles() != null) {
+            AtomicInteger cnt = new AtomicInteger();
+            product.getFiles().forEach(productFiles -> {
                 productFiles.setProduct(product);
+                //메인 파일을 선택했으면 저장
+                if (productFiles.isMainPic()) {
+                    product.setMainPic(productFiles.getUploadUrl() + "\\" + productFiles.getUuid() + "_" + productFiles.getFileName());
+                    cnt.addAndGet(1);
+                }
+                ;
                 productFilesRepository.save(productFiles);
             });
+            //파일은 업로드 했는데 메인파일을 선택하지않았으면
+            if (cnt.get() == 0) {
+                product.setMainPic("exefile.png");
+            }
+        }
+        //파일업로드를 아예 하지않았으면
+        else {
+            product.setMainPic("exefile.png");
         }
         productRepository.save(product);
-        rttr.addFlashAttribute("msg","success");
+        rttr.addFlashAttribute("msg", "success");
         return "redirect:/product/list";
     }
+
 
     @GetMapping("/modify")
     public void modify(Long pno,@ModelAttribute("pageVO")PageVO pageVO,Model model){

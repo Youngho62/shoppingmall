@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "carts")
 @Entity
 @Table(name = "tbl_user")
 public class User {
@@ -39,5 +39,8 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "user")
     private List<UserRole> roles;
+
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private List<Cart> carts;
 
 }

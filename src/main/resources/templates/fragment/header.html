@@ -75,7 +75,8 @@
                 <ul id="navbar">
                     <li><a href="/">Home</a></li>
                     <li><a href="/product/list?keyword=">상품</a></li>
-                    <li><a href="/cart/">장바구니</a></li>
+                    <li sec:authorize="isAuthenticated()"><a th:href="@{/cart/list(uNum=${#authentication.principal.uNum})}">장바구니</a></li>
+                    <li sec:authorize="isAnonymous()"><a href="/users/loginForm">장바구니</a></li>
                     <li><a href="/qna/list">QnA</a></li>
                     <li sec:authorize="isAnonymous()"><a href="/users/loginForm">로그인</a></li>
                     <li sec:authorize="isAnonymous()"><a href="/users/signUp">회원가입</a></li>
@@ -95,7 +96,8 @@
             </div>
             <!-- Cart Menu -->
             <div class="cart-fav-search mb-100">
-                <a href="/cart/" class="cart-nav"><img src="/img/core-img/cart.png" alt=""> Cart <span>(0)</span></a>
+                <a sec:authorize="isAuthenticated()" th:href="@{/cart/list(uNum=${#authentication.principal.uNum})}" class="cart-nav"><img src="/img/core-img/cart.png" alt=""> Cart <span>(0)</span></a>
+                <a sec:authorize="isAnonymous()" href="/users/loginForm" class="cart-nav"><img src="/img/core-img/cart.png" alt=""> Cart <span>(0)</span></a>
                 <a href="#" class="fav-nav"><img src="/img/core-img/favorites.png" alt=""> Favourite</a>
                 <a href="#" class="search-nav"><img src="/img/core-img/search.png" alt=""> Search</a>
             </div>
