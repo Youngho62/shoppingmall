@@ -10,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString(exclude = "carts")
+@ToString(exclude = {"carts","orders"})
 @Entity
 @Table(name = "tbl_user")
 public class User {
@@ -43,4 +43,6 @@ public class User {
     @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
     private List<Cart> carts;
 
+    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    private List<Order> orders;
 }

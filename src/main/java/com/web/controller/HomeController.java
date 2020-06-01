@@ -9,10 +9,6 @@ public class HomeController {
     public void cart(){
 
     }
-    @GetMapping("/checkout")
-    public void checkout(){
-
-    }
     @GetMapping("/")
     public String index(){
         return "/index";

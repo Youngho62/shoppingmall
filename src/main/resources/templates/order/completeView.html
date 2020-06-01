@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:insert="~{fragment/header::header}"></th:block>
+
+<div style="position: absolute; top: 30%; left: 40%;">
+    <div class="alert-primary" style="font-size: 48px">결제가 완료되었습니다.</div>
+    <div style="margin-top: 40px">
+        <div class="alert-warning" style="float: left;">
+            <a href="/users/myPage" style="font-size: 24px">마이페이지</a>
+        </div>
+        <div class="alert-warning" style="text-align: right">
+            <a href="/product/list" style="font-size: 24px">다른 상품 보러가기</a>
+        </div>
+    </div>
+</div>
+
+<th:block th:insert="~{fragment/footer::footer}"></th:block>

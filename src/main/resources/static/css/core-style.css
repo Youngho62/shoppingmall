@@ -738,7 +738,7 @@ img {
       z-index: 1;
       padding: 30px 20px; }
       .main-content-wrapper .cart-table-area .cart-summary h5 {
-        font-size: 18px;
+        font-size: 24px;
         margin-bottom: 0; }
       .main-content-wrapper .cart-table-area .cart-summary .summary-table {
         margin-top: 30px; }
@@ -753,9 +753,9 @@ img {
           text-transform: capitalize; }
           .main-content-wrapper .cart-table-area .cart-summary .summary-table li span {
             color: #6b6b6b;
-            font-size: 14px; }
+            font-size: 18px; }
       .main-content-wrapper .cart-table-area .cart-summary .payment-method label {
-        font-size: 14px;
+        font-size: 18px;
         color: #6b6b6b;
         font-weight: 400;
         margin-bottom: 15px; }
@@ -1369,12 +1369,13 @@ img {
 
 /* :: 10.0 Checkout Area CSS */
 .checkout_details_area form .form-control {
-  height: 60px;
-  border: none;
+  height: 50px;
+  border: 1;
+  border-color: orange;
   border-radius: 0;
-  background-color: #f5f7fa;
+  background-color: floralwhite;
   padding: 30px;
-  color: #6b6b6b;
+  color: black;
   font-size: 14px; }
 .checkout_details_area form textarea.form-control {
   height: 210px; }
@@ -1383,7 +1384,7 @@ img {
   color: #6b6b6b; }
 .checkout_details_area form .nice-select {
   border-radius: 0;
-  height: 60px;
+  height: 40px;
   line-height: 60px;
   background-color: #f5f7fa;
   border: none;

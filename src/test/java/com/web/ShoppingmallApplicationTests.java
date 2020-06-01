@@ -49,15 +49,14 @@ class ShoppingmallApplicationTests {
     @Test
     public void asdf(){
         productRepository.findAll().forEach(product -> {
-            productFilesRepository.findProductFilesByProduct(product).forEach(productFiles -> {
-                if(productFiles.isMainPic()){
-                    product.setMainPic(productFiles.getUploadUrl()+"\\"+productFiles.getUuid()+"_"+productFiles.getFileName());
-                }
-            });
+            product.setPHit(product.getPHit()+138);
             productRepository.save(product);
         });
     }
+    @Test
+    public void assas(){
 
+    }
     @Test
     public void testList1() {
         qnARepository.findAll().forEach(qnA -> {

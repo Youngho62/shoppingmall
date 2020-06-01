@@ -8,9 +8,8 @@
         <div class="row">
             <div class="col-12 col-lg-8">
                 <div class="cart-title mt-50">
-                    <h2>Shopping Cart</h2>
+                    <h2 style="color: orange" ><ins>[[${#authentication.principal.userName+'님의 장바구니'}]]</ins></h2>
                 </div>
-
                 <div class="cart-table clearfix">
                     <table class="table table-responsive">
                         <thead>
@@ -38,9 +37,9 @@
                                 <div class="qty-btn d-flex">
                                     <p>Qty</p>
                                     <div class="quantity" th:with="i=${cartStat.index}">
-                                        <span class="qty-minus" th:data-idx="${i}"><i class="fa fa-minus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                        <input type="number" class="qty-text" th:id="${'qty'+i}" name="quantity" th:value="${cart.count}">
-                                        <span class="qty-plus" th:data-idx="${i}"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                        <span class="qty-minus" th:data-idx="${i}" th:data-cno="${cart.cno}" ><i class="fa fa-minus" aria-hidden="true"></i>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        <input type="number" class="qty-text" th:id="${'qty'+i}" name="count" th:value="${cart.count}">
+                                        <span class="qty-plus" th:data-idx="${i}" th:data-cno="${cart.cno}"><i class="fa fa-plus" aria-hidden="true"></i></span>
                                     </div>
                                 </div>
                             </td>
@@ -57,14 +56,14 @@
             </div>
             <div class="col-12 col-lg-4">
                 <div class="cart-summary">
-                    <h5>Cart Total</h5>
+                    <h5>장바구니 총합</h5>
                     <ul class="summary-table">
                         <li><span>전체 가격:</span> <span id="total" style="color: #fbb710;line-height: 1;" th:value="${amount}"></span></li>
                         <li><span>배송비:</span> <span id="ship" style="color: #fbb710;line-height: 1;">[[${amount>1000000?'무료':'2,500 ￦'}]]</span></li>
                         <li><span>total:</span> <span id="totalShip" style="color: #fbb710;line-height: 1;"th:value="${amount>1000000?amount:amount+2500}"></span></li>
                     </ul>
                     <div class="cart-btn mt-100">
-                        <a href="/cart" class="btn amado-btn w-100">Checkout</a>
+                        <a th:href="@{/cart/payment(uNum=${#authentication.principal.uNum})}" class="btn amado-btn w-100">확인</a>
                     </div>
                 </div>
             </div>
@@ -99,11 +98,12 @@
             var effect = document.getElementById('qty'+idx);
             var qty = effect.value;
             var price=$("#price"+idx).attr("value");
+            var cno=$(this).attr('data-cno');
             if(!isNaN(qty)&&qty>0)effect.value--;
             $.ajax({
                 type:'get',
                 url:'/cart/amount',
-                data: {qty:qty, price:price, opt:0},
+                data: {cno:cno,qty:qty, price:price, opt:0},
                 success:function (result) {
                     if(result>=0){total=(total*1)-(price*1)};
                     result=result<0?0:result;
@@ -119,11 +119,12 @@
             var effect = document.getElementById('qty'+idx);
             var qty = effect.value;
             var price=$("#price"+idx).attr("value");
+            var cno=$(this).attr('data-cno');
             if(!isNaN(qty))effect.value++;
             $.ajax({
                 type:'get',
                 url:'/cart/amount',
-                data: {qty:qty, price:price,opt:1},
+                data: {cno:cno,qty:qty, price:price,opt:1},
                 success:function (result) {
                     $("#priceAmount"+idx).text(numberWithCommas(result)+" ￦");
                     $("#total").text(numberWithCommas((total*1)+(price*1))+" ￦");
