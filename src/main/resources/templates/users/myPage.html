@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:insert="~{fragment/header::header}"></th:block>
+<div class="container mt-30" >
+    <div>
+        <div class="header-panel mb-5 pb-5" style="height:1cm">
+            <div class="alert alert-info"><strong style="font-size: 30px">[[${#authentication.principal.userName+'님의 마이페이지'}]]</strong></div>
+        </div>
+        <div class="mb-3 pb-3">
+
+        </div>
+        <div class="panel-body mb-3 pb-3">
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr class="table-primary">
+                    <th width="100px">번호</th>
+                    <th width="100px">문의유형</th>
+                    <th width="500px">제목</th>
+                    <th width="70px">조회수</th>
+                    <th width="180px">작성자</th>
+                    <th width="120px">작성일자</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>10</td>
+                    <td>10</td>
+                    <td>10</td>
+                    <td>10</td>
+                    <td>10</td>
+                    <td>10</td>
+
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<th:block th:insert="~{fragment/footer::footer}"></th:block>

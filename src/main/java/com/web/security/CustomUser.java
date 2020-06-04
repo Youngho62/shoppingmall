@@ -22,6 +22,7 @@ public class CustomUser extends org.springframework.security.core.userdetails.Us
     private String postNum;
     private String addr1;
     private String addr2;
+    private int point;
     private User user;
 
     public CustomUser(User user){
@@ -33,6 +34,7 @@ public class CustomUser extends org.springframework.security.core.userdetails.Us
         this.postNum=user.getPostNum();
         this.addr1=user.getAddr1();
         this.addr2=user.getAddr2();
+        this.point=user.getPoint();
         this.userRole=user.getRoles().toString();
     }
 

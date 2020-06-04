@@ -45,8 +45,12 @@ public class OrderController {
         }
 
         orderRepository.save(order);
+        User user = usersRepository.findById(uNum).get();
+        //결제 완료를 하면 10%를 포인트로 지급
 
-        User user=usersRepository.findById(uNum).get();
+            user.setPoint(user.getPoint() + (int) ((order.getTotalPrice() <100000?order.getTotalPrice()-2500 :order.getTotalPrice() )* 0.1));
+
+
         List<Cart> carts=cartRepository.findAllByUser(user);
         carts.forEach(cart -> {
             cartRepository.delete(cart);

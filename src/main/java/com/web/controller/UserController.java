@@ -35,5 +35,17 @@ public class UserController {
         int num=usersRepository.findCountByUserId(userId);
         return num;
     }
+
+    @GetMapping("/myPage")
+    public void myPage(){
+
+    }
+    @GetMapping("/modifyPoint")
+    @ResponseBody
+    public void modifyPoint(Long uNum,int point){
+        User user=usersRepository.findById(uNum).get();
+        user.setPoint(user.getPoint()-point);
+        usersRepository.save(user);
+    }
 }
 

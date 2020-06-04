@@ -12,7 +12,8 @@
     <artifactId>shoppingmall</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>shoppingmall</name>
-    <description>Demo project for Spring Boot</description>
+    <packaging>jar</packaging>
+    <description>Yh's ShoppingMall</description>
 
     <properties>
         <java.version>1.8</java.version>
@@ -100,6 +101,7 @@
     </dependencies>
 
     <build>
+
         <plugins>
             <plugin>
                 <groupId>com.mysema.maven</groupId>

@@ -19,7 +19,7 @@
                             <th width="150px"style="font-size: 16px;">가격</th>
                             <th width="120px" style="font-size: 16px;">갯수</th>
                             <th width="150px" style="font-size: 16px;">총합</th>
-                            <th width="40px" style="font-size: 16px;">삭제</th>
+                            <th width="50px" style="font-size: 16px;">삭제</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -58,98 +58,176 @@
                 <div class="cart-summary">
                     <h5>장바구니 총합</h5>
                     <ul class="summary-table">
+                        <input type="checkbox" id="pointCheck" name="pointCheck">
+                        <label style="font-size: 18px" for="pointCheck">포인트 전액 사용</label>
+
+                        <li style="margin-bottom: 0px"><span>포인트:</span><input style="text-align: right" type="number" id="inputPoint" value="0">
+                            <a style="font-size: 18px;margin-right: 0px" class="btn btn-outline-primary pointUsed">사용</a>
+                            <a style="font-size: 18px; margin-left: 0px" class="btn btn-outline-warning pointCancel">취소</a>
+                        </li>
+                        <p style="color: palevioletred;">[[${'*최대사용가능 포인트: '+#authentication.principal.point}]]</p>
                         <li><span>전체 가격:</span> <span id="total" style="color: #fbb710;line-height: 1;" th:value="${amount}"></span></li>
                         <li><span>배송비:</span> <span id="ship" style="color: #fbb710;line-height: 1;">[[${amount>1000000?'무료':'2,500 ￦'}]]</span></li>
-                        <li><span>total:</span> <span id="totalShip" style="color: #fbb710;line-height: 1;"th:value="${amount>1000000?amount:amount+2500}"></span></li>
+                        <li style="margin-bottom: 0px"><span>total:</span> <span id="totalShip" style="color: #fbb710;line-height: 1;"th:value="${amount>1000000?amount:amount+2500}"></span></li>
+                        <p style="color: palevioletred;" id="point"></p>
+                        <p style="color: palevioletred;">*전체금액의 10%가 적립됩니다.</p>
                     </ul>
                     <div class="cart-btn mt-100">
-                        <a th:href="@{/cart/payment(uNum=${#authentication.principal.uNum})}" class="btn amado-btn w-100">확인</a>
+                        <form id="f1" method="post" action="/cart/postPayment">
+                            <input type="hidden" id="uNumInput" name="uNum">
+                            <input type="hidden" id="totalInput" name="total">
+                            <button type="submit" class="btn amado-btn w-100">확인</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<th:block th:insert="~{fragment/footer::footer}"></th:block>
-<script th:inline="javascript">
-    var total=numberWithCommas([[${amount}]]);
-    $("#total").text(total+" ￦");
-    var totalShip=numberWithCommas($("#totalShip").attr("value"));
-    $("#totalShip").text(totalShip+" ￦");
+    <th:block th:insert="~{fragment/footer::footer}"></th:block>
+    <script th:inline="javascript">
+        var total=numberWithCommas([[${amount}]]);
+        $("#total").text(total+" ￦");
+        var totalShip=numberWithCommas($("#totalShip").attr("value"));
+        $("#totalShip").text(totalShip+" ￦");
 
-    var size=[[${carts.size()}]];
-    for(var i=0;i<size;i++){
-        var price=numberWithCommas($("#price"+i).attr("value"));
-        $("#price"+i).text(price+" ￦");
-        var priceAmount=numberWithCommas($("#priceAmount"+i).attr("value"));
-        $("#priceAmount"+i).text(priceAmount+" ￦");
-    }
-    $(window).load(function () {
-        var msg=[[${msg}]]
-        if(msg=="deletesuccess"){
-            alert("장바구니에서 삭제되었습니다.");
+        var point=[[${amount*0.1}]];
+        point=Math.floor(point);
+        point=numberWithCommas(point);
+        $("#point").text("*"+point+"포인트 적립 예정");
+
+        var size=[[${carts.size()}]];
+        for(var i=0;i<size;i++){
+            var price=numberWithCommas($("#price"+i).attr("value"));
+            $("#price"+i).text(price+" ￦");
+            var priceAmount=numberWithCommas($("#priceAmount"+i).attr("value"));
+            $("#priceAmount"+i).text(priceAmount+" ￦");
         }
+        $(".pointCancel").hide();
+        $(window).load(function () {
+            var msg=[[${msg}]]
+            if(msg=="deletesuccess"){
+                alert("장바구니에서 삭제되었습니다.");
+            }
 
-    });
-    $(document).ready(function () {
-        var total=$("#total").attr("value");
-        $(".qty-minus").click(function () {
-            var idx=$(this).attr('data-idx');
-            var effect = document.getElementById('qty'+idx);
-            var qty = effect.value;
-            var price=$("#price"+idx).attr("value");
-            var cno=$(this).attr('data-cno');
-            if(!isNaN(qty)&&qty>0)effect.value--;
-            $.ajax({
-                type:'get',
-                url:'/cart/amount',
-                data: {cno:cno,qty:qty, price:price, opt:0},
-                success:function (result) {
-                    if(result>=0){total=(total*1)-(price*1)};
-                    result=result<0?0:result;
-                    $("#priceAmount"+idx).text(numberWithCommas(result)+" ￦");
-                    $("#total").text(numberWithCommas(total)+" ￦");
-                    total*1>1000000?$("#ship").text("무료"):$("#ship").text("2,500 ￦");
-                    total*1>1000000?$("#totalShip").text(numberWithCommas(total)+" ￦"):$("#totalShip").text(numberWithCommas(total*1+2500)+" ￦");
-                }
-            });
         });
-        $(".qty-plus").click(function () {
-            var idx=$(this).attr('data-idx');
-            var effect = document.getElementById('qty'+idx);
-            var qty = effect.value;
-            var price=$("#price"+idx).attr("value");
-            var cno=$(this).attr('data-cno');
-            if(!isNaN(qty))effect.value++;
-            $.ajax({
-                type:'get',
-                url:'/cart/amount',
-                data: {cno:cno,qty:qty, price:price,opt:1},
-                success:function (result) {
-                    $("#priceAmount"+idx).text(numberWithCommas(result)+" ￦");
-                    $("#total").text(numberWithCommas((total*1)+(price*1))+" ￦");
-                    total=(total*1)+(price*1);
-                    total*1>1000000?$("#ship").text("무료"):$("#ship").text("2,500 ￦");
-                    total*1>1000000?$("#totalShip").text(numberWithCommas(total)+" ￦"):$("#totalShip").text(numberWithCommas(total*1+2500)+" ￦");
-                }
-            });
-        });
-        $(".delbtn").on("click",function () {
-            var cno=$(this).attr("data-cno");
-            $.ajax({
-                type:'delete',
-                url:'/cart/delete',
-                data: {cno:cno},
-                success:function (result) {
-                    location.href="/cart/list?uNum="+[[${#authentication.principal.uNum}]];
-                }
-            });
-        });
-    });
 
-    function numberWithCommas(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-</script>
+        $(document).ready(function () {
+            var total=$("#total").attr("value");
+            $(".qty-minus").click(function () {
+                var idx=$(this).attr('data-idx');
+                var effect = document.getElementById('qty'+idx);
+                var qty = effect.value;
+                var price=$("#price"+idx).attr("value");
+                var cno=$(this).attr('data-cno');
+                if(!isNaN(qty)&&qty>0)effect.value--;
+                $.ajax({
+                    type:'get',
+                    url:'/cart/amount',
+                    data: {cno:cno,qty:qty, price:price, opt:0},
+                    success:function (result) {
+                        if(result>=0){total=(total*1)-(price*1)};
+                        result=result<0?0:result;
+                        $("#priceAmount"+idx).text(numberWithCommas(result)+" ￦");
+                        $("#total").text(numberWithCommas(total)+" ￦");
+                        total*1>1000000?$("#ship").text("무료"):$("#ship").text("2,500 ￦");
+                        total*1>1000000?$("#totalShip").text(numberWithCommas(total)+" ￦"):$("#totalShip").text(numberWithCommas(total*1+2500)+" ￦");
+                    }
+                });
+            });
+            $(".qty-plus").click(function () {
+                var idx=$(this).attr('data-idx');
+                var effect = document.getElementById('qty'+idx);
+                var qty = effect.value;
+                var price=$("#price"+idx).attr("value");
+                var cno=$(this).attr('data-cno');
+                if(!isNaN(qty))effect.value++;
+                $.ajax({
+                    type:'get',
+                    url:'/cart/amount',
+                    data: {cno:cno,qty:qty, price:price,opt:1},
+                    success:function (result) {
+                        $("#priceAmount"+idx).text(numberWithCommas(result)+" ￦");
+                        $("#total").text(numberWithCommas((total*1)+(price*1))+" ￦");
+                        total=(total*1)+(price*1);
+                        total*1>1000000?$("#ship").text("무료"):$("#ship").text("2,500 ￦");
+                        total*1>1000000?$("#totalShip").text(numberWithCommas(total)+" ￦"):$("#totalShip").text(numberWithCommas(total*1+2500)+" ￦");
+                    }
+                });
+            });
+            $(".delbtn").on("click",function () {
+                var cno=$(this).attr("data-cno");
+                $.ajax({
+                    type:'delete',
+                    url:'/cart/delete',
+                    data: {cno:cno},
+                    success:function (result) {
+                        location.href="/cart/list?uNum="+[[${#authentication.principal.uNum}]];
+                    }
+                });
+            });
+            $("#pointCheck").on("change",function () {
+                if($("input:checkbox[name=pointCheck]").is(":checked") == true){
+                    $("#inputPoint").val([[${#authentication.principal.point > amount ? amount : #authentication.principal.point}]]);
+                }else {
+                    $("#inputPoint").val(0);
+                }
+            });
+            $(".pointUsed").on("click",function (e) {
+                $(".pointUsed").hide();
+                $(".pointCancel").show();
+                $("#inputPoint").attr("style","text-align: right; background: wheat");
+                $("#inputPoint").attr("readonly",true);
+                e.preventDefault();
+                //입력값이 포인트 사용 가능값보다 많으면 최대 포인트 사용 값으로 고정
+                var point = $("#inputPoint").val() > [[${#authentication.principal.point}]] ? [[${#authentication.principal.point}]] : $("#inputPoint").val();
+                point =point > [[${amount}]] ? [[${amount}]] : point;
+                $("#inputPoint").val(point);
+
+                var addPoint=([[${amount}]]-point)*0.1;
+                addPoint=Math.floor(addPoint);
+                addPoint=numberWithCommas(addPoint);
+                $("#point").text("*"+addPoint+"포인트 적립 예정");
+
+                total-=(point*1);
+                var totalVal=numberWithCommas([[${amount}]]-point);
+
+                $("#total").text(totalVal+" ￦");
+                var totalShip=numberWithCommas(($("#totalShip").attr("value"))-point);
+                $("#totalShip").text(totalShip+" ￦");
+            });
+            $(".pointCancel").on("click",function (e) {
+                $(".pointCancel").hide();
+                $(".pointUsed").show();
+                $("#inputPoint").attr("style","text-align: right");
+                $("#inputPoint").attr("readonly",false);
+                e.preventDefault();
+
+                var addPoint=[[${amount*0.1}]];
+                addPoint=numberWithCommas(addPoint);
+                $("#point").text("*"+addPoint+"포인트 적립 예정");
+
+                var point= $("#inputPoint").val();
+                total+=(point*1);
+                var totalVal=numberWithCommas([[${amount}]]);
+                $("#total").text(totalVal+" ￦");
+                var totalShip=numberWithCommas($("#totalShip").attr("value"));
+                $("#totalShip").text(totalShip+" ￦");
+            });
+
+            $(".amado-btn").click(function (e) {
+                e.preventDefault();
+                var formObj = $("#f1");
+                formObj.attr("action","/cart/postPayment");
+                formObj.attr("method", "post");
+                $("#uNumInput").val([[${#authentication.principal.uNum}]]);
+                $("#totalInput").val(total*1);
+                formObj.submit();
+            });
+        });
+
+        function numberWithCommas(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    </script>
 
 </html>

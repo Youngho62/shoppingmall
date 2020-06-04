@@ -48,10 +48,10 @@ class ShoppingmallApplicationTests {
     }
     @Test
     public void asdf(){
-        productRepository.findAll().forEach(product -> {
-            product.setPHit(product.getPHit()+138);
-            productRepository.save(product);
+        productRepository.findAllSortByPHit(5).forEach(product -> {
+            System.out.println(product.getName()+": "+product.getPHit());
         });
+
     }
     @Test
     public void assas(){

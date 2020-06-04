@@ -16,8 +16,8 @@
                 <div class="mt-50 clearfix">
                     <div style="margin-bottom: 20px" class="cart-title">
                         <h2 style="margin-bottom: 10px">배송지 정보</h2>
-                        <input type="radio" id="originAddr" name="dest" checked>기존 배송지 &nbsp;&nbsp; /&nbsp;&nbsp;
-                        <input type="radio" id="newAddr" name="dest">새로운 배송지
+                        <input type="radio" id="originAddr" name="dest" checked><label for="originAddr">기존 배송지</label> &nbsp;&nbsp; /&nbsp;&nbsp;
+                        <input type="radio" id="newAddr" name="dest"><label for="newAddr">새로운 배송지</label>
                     </div>
 
                     <div class="row">
@@ -97,32 +97,36 @@
                 <div class="cart-summary">
                     <h5>Cart Total</h5>
                     <ul class="summary-table">
-                        <li><span>전체 가격:</span> <span id="total" style="color: #fbb710;line-height: 1;" th:value="${amount}"></span></li>
-                        <li><span>배송비:</span> <span id="ship" style="color: #fbb710;line-height: 1;">[[${amount>1000000?'무료':'2,500 ￦'}]]</span></li>
-                        <li><span>total:</span> <span id="totalShip" style="color: #fbb710;line-height: 1;"th:value="${amount>1000000?amount:amount+0}"></span></li>
+                        <li><span>포인트 사용:</span> <span id="pointUsed" style="color: #fbb710;line-height: 1;" th:value="${amount-total}"></span></li>
+                        <li><span>전체 가격:</span> <span id="total" style="color: #fbb710;line-height: 1;" th:value="${total}"></span></li>
+                        <li class="mb-0 pb-0"><span>배송비:</span> <span id="ship" style="color: #fbb710;line-height: 1;">[[${amount>1000000?'무료':'2,500 ￦'}]]</span></li>
+                        <p style="color: palevioletred">*배송비는 10만원부터 무료입니다.</p>
+                        <li style="margin-bottom: 0px"><span>total:</span> <span id="totalShip" style="color: #fbb710;line-height: 1;"th:value="${amount>1000000?total:total+2500}"></span></li>
+                        <p style="color: palevioletred;" id="point"></p>
+                        <p style="color: palevioletred;">*전체금액의 10%가 적립됩니다.</p>
                     </ul>
 
                     <div class="payment-method">
-                        <input type="radio" id="creditCard" name="payment" checke>신용카드<img src="/img/core-img/paypal.png"/><br><br>
+                        <input type="radio" id="creditCard" name="payment" checked>신용카드<img src="/img/core-img/paypal.png"/><br><br>
                         <input type="radio" id="cash" name="payment">계좌이체
                         <p style="color: palevioletred">*계좌 이체의 경우 입금확인 후부터 배송단계가 진행됩니다.</p>
                     </div>
 
                     <div id="cashDiv">
-                            <div>
-                                <p><strong>입금자명</strong></p>
-                                <input width="50px" type="text" name="bankSender"><br>
-                            </div>
-                            <div style="display: inline-block" class="pt-5">
-                                <p style="float: left"><strong>입금은행</strong></p>
-                                <select style="float: left">
-                                    <option value="">선택하세요</option>
-                                    <option value="1">기업은행 208-141078-01-011 김영호</option>
-                                    <option value="2">신한은행 110-380-275346 김영호</option>
-                                    <option value="3">우리은행 1002-647-638880 김영호</option>
-                                    <option value="1">카카오뱅크 3333-05-5076236 김영호</option>
-                                </select>
-                            </div>
+                        <div>
+                            <p><strong>입금자명</strong></p>
+                            <input width="50px" type="text" name="bankSender"><br>
+                        </div>
+                        <div style="display: inline-block" class="pt-5">
+                            <p style="float: left"><strong>입금은행</strong></p>
+                            <select style="float: left">
+                                <option value="">선택하세요</option>
+                                <option value="1">기업은행 208-141078-01-011 김영호</option>
+                                <option value="2">신한은행 110-380-275346 김영호</option>
+                                <option value="3">우리은행 1002-647-638880 김영호</option>
+                                <option value="1">카카오뱅크 3333-05-5076236 김영호</option>
+                            </select>
+                        </div>
                     </div>
                     <!-- //pay_bankbook_box -->
 
@@ -143,10 +147,17 @@
     IMP.init('imp39354473'); // 'iamport' 대신 부여받은 "가맹점 식별코드"를 사용
     $("#cashDiv").hide();
 
-    var total=numberWithCommas([[${amount}]]);
+    var pointUsed=numberWithCommas([[${amount-total}]]);
+    $("#pointUsed").text(pointUsed+" ￦");
+    var total=numberWithCommas([[${total}]]);
     $("#total").text(total+" ￦");
     var totalShip=numberWithCommas($("#totalShip").attr("value"));
     $("#totalShip").text(totalShip+" ￦");
+
+    var point=[[${total*0.1}]];
+    point=Math.floor(point);
+    point=numberWithCommas(point);
+    $("#point").text("*"+point+"포인트 적립 예정");
 
     var size=[[${carts.size()}]];
     for(var i=0;i<size;i++){
@@ -196,7 +207,7 @@
             var uNum=[[${user.uNum}]];
             var destPostNum=$(".postNum").val();
             var destAddr=$(".addr1").val()+", "+$(".addr2").val();
-            var totalPrice=[[${amount}]];
+            var totalPrice=$("#totalShip").attr("value");
             var deliRequests=$(".deliRequests option:selected").val();
             deliRequests=deliRequests == "직접입력" ? $(".inputDeliRequest").val():deliRequests;
             var pno=[];
@@ -213,7 +224,7 @@
                     pay_method: 'card',
                     merchant_uid: 'merchant_' + new Date().getTime(),
                     name: $("#productName").text(),
-                    amount: [[${amount}]],
+                    amount: [[${amount > 100000 ? total : total+2500}]],
                     buyer_email: [[${#authentication.principal.userEmail}]],
                     buyer_name: [[${#authentication.principal.userName}]],
                     buyer_tel: [[${#authentication.principal.userPhone}]],
@@ -222,6 +233,12 @@
                     m_redirect_url: 'https://www.yourdomain.com/payments/complete'
                 }, function (rsp) {
                     if (rsp.success) {
+                        $.ajax({
+                            type: 'get',
+                            url: '/users/modifyPoint',
+                            data: {uNum: [[${#authentication.principal.uNum}]], point: [[${amount-total}]]},
+                            success: console.log("success")
+                        });
                         var msg = '결제가 완료되었습니다.\n';
                         msg += '결제 금액 : ' + rsp.paid_amount + '\n';
                         msg += '카드 승인번호 : ' + rsp.apply_num;
@@ -247,7 +264,7 @@
                             }
                         });
                     } else {
-                        //결제에 실패하면 화면 이동
+                        //결제에 실패하면 에러메시지 출력 후 화면 이동
                         var msg = '결제에 실패하였습니다.\n';
                         msg += '에러내용 : ' + rsp.error_msg + '\n';
                         msg += '장바구니 화면으로 되돌아갑니다.';

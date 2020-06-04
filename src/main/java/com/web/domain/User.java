@@ -36,6 +36,8 @@ public class User {
     @NotNull
     private String addr2;
 
+    private int point;
+
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "user")
     private List<UserRole> roles;

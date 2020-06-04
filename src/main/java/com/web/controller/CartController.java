@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -97,8 +98,11 @@ public class CartController {
 
         return opt==0?(chQty-1)*chPrice:(chQty+1)*chPrice;
     }
-    @GetMapping("/payment")
-    public void payment(Long uNum,Model model){
+
+
+    @PostMapping("/postPayment")
+    public String postPayment(Long uNum,int total, RedirectAttributes rttr){
+        System.out.println(uNum+total+"☆★☆★☆★☆★☆★☆★☆★");
         User user=usersRepository.findById(uNum).get();
         List<Cart> carts=cartRepository.findAllByUser(user);
         AtomicInteger amount= new AtomicInteger();
@@ -106,9 +110,18 @@ public class CartController {
             Product product=cart.getProduct();
             amount.addAndGet(product.getPrice()*cart.getCount());
         });
-        model.addAttribute("amount",amount);
-        model.addAttribute("user",user);
-        model.addAttribute("carts",carts);
+        rttr.addFlashAttribute("total",total);
+        rttr.addFlashAttribute("amount",amount);
+        rttr.addFlashAttribute("user",user);
+        rttr.addFlashAttribute("carts",carts);
+
+        return "redirect:/cart/payment";
     }
+
+    @GetMapping("payment")
+    public void payment(){
+
+    }
+
 
 }
