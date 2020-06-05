@@ -3,8 +3,10 @@ package com.web.domain;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.List;
 
 @Getter
@@ -27,7 +29,10 @@ public class Order {
     private String destAddr;
     private String deliRequests;
     private int totalPrice;
+    private int point;
+    private boolean payed;
 
-    private boolean isPayed;
+    @CreationTimestamp
+    private Timestamp regdate;
 
 }

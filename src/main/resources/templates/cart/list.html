@@ -65,10 +65,10 @@
                             <a style="font-size: 18px;margin-right: 0px" class="btn btn-outline-primary pointUsed">사용</a>
                             <a style="font-size: 18px; margin-left: 0px" class="btn btn-outline-warning pointCancel">취소</a>
                         </li>
-                        <p style="color: palevioletred;">[[${'*최대사용가능 포인트: '+#authentication.principal.point}]]</p>
-                        <li><span>전체 가격:</span> <span id="total" style="color: #fbb710;line-height: 1;" th:value="${amount}"></span></li>
+                        <p style="color: palevioletred;">[[${'*최대사용가능 포인트: '+user.point}]]</p>
+                        <li><span>포인트 사용 후 가격:</span> <span id="total" style="color: #fbb710;line-height: 1;" th:value="${amount}"></span></li>
                         <li><span>배송비:</span> <span id="ship" style="color: #fbb710;line-height: 1;">[[${amount>1000000?'무료':'2,500 ￦'}]]</span></li>
-                        <li style="margin-bottom: 0px"><span>total:</span> <span id="totalShip" style="color: #fbb710;line-height: 1;"th:value="${amount>1000000?amount:amount+2500}"></span></li>
+                        <li style="margin-bottom: 0px"><span>결제 가격:</span> <span id="totalShip" style="color: #fbb710;line-height: 1;"th:value="${amount>1000000?amount:amount+2500}"></span></li>
                         <p style="color: palevioletred;" id="point"></p>
                         <p style="color: palevioletred;">*전체금액의 10%가 적립됩니다.</p>
                     </ul>
@@ -83,6 +83,7 @@
             </div>
         </div>
     </div>
+</div>
     <th:block th:insert="~{fragment/footer::footer}"></th:block>
     <script th:inline="javascript">
         var total=numberWithCommas([[${amount}]]);
@@ -167,7 +168,7 @@
             });
             $("#pointCheck").on("change",function () {
                 if($("input:checkbox[name=pointCheck]").is(":checked") == true){
-                    $("#inputPoint").val([[${#authentication.principal.point > amount ? amount : #authentication.principal.point}]]);
+                    $("#inputPoint").val([[${user.point > amount ? amount : user.point}]]);
                 }else {
                     $("#inputPoint").val(0);
                 }
@@ -179,7 +180,7 @@
                 $("#inputPoint").attr("readonly",true);
                 e.preventDefault();
                 //입력값이 포인트 사용 가능값보다 많으면 최대 포인트 사용 값으로 고정
-                var point = $("#inputPoint").val() > [[${#authentication.principal.point}]] ? [[${#authentication.principal.point}]] : $("#inputPoint").val();
+                var point = $("#inputPoint").val() > [[${user.point}]] ? [[${user.point}]] : $("#inputPoint").val();
                 point =point > [[${amount}]] ? [[${amount}]] : point;
                 $("#inputPoint").val(point);
 

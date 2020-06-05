@@ -71,7 +71,7 @@
                 <a href="/"><img src="/img/core-img/logo.png" alt=""></a>
             </div>
             <!-- Amado Nav -->
-            <nav class="amado-nav">
+            <nav class="amado-nav mb-100">
                 <ul id="navbar">
                     <li><a href="/">Home</a></li>
                     <li><a href="/product/list?keyword=">상품</a></li>
@@ -80,7 +80,7 @@
                     <li><a href="/qna/list">QnA</a></li>
                     <li sec:authorize="isAnonymous()"><a href="/users/loginForm">로그인</a></li>
                     <li sec:authorize="isAnonymous()"><a href="/users/signUp">회원가입</a></li>
-                    <li sec:authorize="isAuthenticated()"><a href="/users/myPage">마이페이지</a></li>
+                    <li sec:authorize="isAuthenticated()"><a th:href="@{/users/myPage(uNum=${#authentication.principal.uNum})}">마이페이지</a></li>
                     <li sec:authorize="isAuthenticated()">
                         <a href="#" onclick="document.getElementById('logout-form').submit();">로그아웃</a>
                         <form id="logout-form" action="/logout" method="POST">
@@ -89,27 +89,15 @@
                     </li>
                 </ul>
             </nav>
-            <!-- Button Group -->
-            <div class="amado-btn-group mt-30 mb-100">
-                <a href="#" class="btn amado-btn mb-15">%Discount%</a>
-                <a href="#" class="btn amado-btn active">New this week</a>
-            </div>
-            <!-- Cart Menu -->
-            <div class="cart-fav-search mb-100">
-                <a sec:authorize="isAuthenticated()" th:href="@{/cart/list(uNum=${#authentication.principal.uNum})}" class="cart-nav"><img src="/img/core-img/cart.png" alt=""> Cart <span>(0)</span></a>
-                <a sec:authorize="isAnonymous()" href="/users/loginForm" class="cart-nav"><img src="/img/core-img/cart.png" alt=""> Cart <span>(0)</span></a>
-                <a href="#" class="fav-nav"><img src="/img/core-img/favorites.png" alt=""> Favourite</a>
-                <a href="#" class="search-nav"><img src="/img/core-img/search.png" alt=""> Search</a>
-            </div>
+
             <!-- Social Button -->
             <div class="social-info d-flex justify-content-between">
-                <a href="#"><i class="fa fa-pinterest" aria-hidden="true"></i></a>
-                <a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a>
-                <a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-                <a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+                <a target="_blank" href="https://github.com/Youngho62/shoppingmall"><i class="fa fa-github" aria-hidden="true"></i></a>
+                <a href="mailto:rladudgh337@naver.com"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>
+                <a target="_blank" href="http://www.google.com"><i class="fa fa-google" aria-hidden="true"></i></a>
+                <a target="_blank" href="http://www.facebook.com"><i class="fa fa-facebook" aria-hidden="true"></i></a>
             </div>
         </header>
         <!-- Header Area End -->
-
 </th:block>
 

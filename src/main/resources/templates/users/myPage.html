@@ -11,31 +11,139 @@
 
         </div>
         <div class="panel-body mb-3 pb-3">
+            <p style="font-size: 24px"><strong>내정보</strong></p>
+            <div style="width: 500px; padding:30px 50px 30px 50px; border: 1px solid black;">
+                <p style="font-size: 18px; color: #0c5460">
+                    이름: [[${user.userName}]]<br />
+                    아이디: [[${user.userId}]]<br />
+                    핸드폰 번호: [[${user.userPhone}]]<br />
+                    이메일: [[${user.userEmail}]]<br />
+                    누적 포인트: [[${user.point}]]<br /><br>
+                    <a th:href="@{/users/modify(uNum=${user.uNum})}" class="btn btn-lg btn-outline-primary">회원정보 수정</a>
+                </p>
+            </div>
+        </div>
+        <div class="panel-body mb-3 pb-3">
+            <p style="font-size: 24px"><strong>주문내역</strong><small> -주문내역 더블 클릭시 주문 상세 조회 페이지로 이동합니다.</small></p>
             <table class="table table-bordered table-hover">
                 <thead>
                 <tr class="table-primary">
-                    <th width="100px">번호</th>
-                    <th width="100px">문의유형</th>
-                    <th width="500px">제목</th>
-                    <th width="70px">조회수</th>
-                    <th width="180px">작성자</th>
-                    <th width="120px">작성일자</th>
+                    <th width="100px">주문번호</th>
+                    <th>주문날짜</th>
+                    <th>결제금액</th>
+                    <th>배송지</th>
+                    <th>결제유무</th>
                 </tr>
                 </thead>
-                <tbody>
-                <tr>
-                    <td>10</td>
-                    <td>10</td>
-                    <td>10</td>
-                    <td>10</td>
-                    <td>10</td>
-                    <td>10</td>
-
+                <tbody id="orderTable">
+                <tr th:each="order:${orders}" th:with="i=${orderStat.index}">
+                    <td>[[${order.ono}]]</td>
+                    <td>[[${#dates.format(order.regdate,'yyyy-MM-dd')}]]</td>
+                    <td th:id="${'totalPrice'+i}" th:value="${order.totalPrice}"></td>
+                    <td>[[${order.destAddr}]]</td>
+                    <td>[[${order.payed ==true ? '결제완료':'미결제'}]]</td>
                 </tr>
                 </tbody>
             </table>
         </div>
+
+        <div class="panel-body mb-3 pb-3">
+            <p style="font-size: 24px"><strong>최근 나의 문의 내역</strong><small id="qnaCount"></small>
+                <select id="viewQna" class="pull-right" style="width: 250px">
+                    <option value="5">최근 5개</option>
+                    <option value="10">최근 10개</option>
+                    <option value="15">최근 15개</option>
+                    <option value="20">최근 20개</option>
+                    <option value="30">최근 30개</option>
+                </select>
+            </p>
+            <div class="panel-body">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr class="table-primary">
+                        <th width="100px">번호</th>
+                        <th width="100px">문의유형</th>
+                        <th width="500px">제목</th>
+                        <th width="70px">조회수</th>
+                        <th width="180px">작성자</th>
+                        <th width="120px">작성일자</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody">
+                    <tr th:each="qna:${qnas}">
+                        <td>[[${qna.qno}]]</td>
+                        <td>[[${(qna.qnaKinds=='답글'?'--':'')+qna.qnaKinds}]]</td>
+                        <td><a th:href="@{/qna/view(qno=${qna.qno})}">[[${qna.title}]]</a></td>
+                        <td>[[${qna.qHit}]]</td>
+                        <td>[[${qna.writer}]]</td>
+                        <td class="center">[[${#dates.format(qna.regdate,'yyyy-MM-dd')}]]</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
-
 <th:block th:insert="~{fragment/footer::footer}"></th:block>
+<script th:inline="javascript">
+    var size=[[${orders.size()}]];
+    for(var i=0;i<size;i++) {
+        var totalPrice = numberWithCommas($("#totalPrice" + i).attr("value"));
+        $("#totalPrice"+i).text(totalPrice + " ￦");
+    }
+    $("#qnaCount").text([[${' - 전체 '+count+' 개'}]])
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+
+    $( document ).ready( function() {
+        $("#orderTable").on("click", "tr", function () {
+            var tds = $(this).find('td');
+            var ono = tds[0].innerHTML;
+            $("#orderTable").attr("onClick", "location.href='/order/view?ono=" + ono + "'");
+        });
+        $(".boardLink").click(function (e) {
+            e.preventDefault();
+            var qnaNo=$(this).attr("href");
+
+            formObj.attr("action",[[@{'/qna/view'}]]);
+            formObj.append("<input type='hidden' name='qno' value='"+qnaNo+"'>");
+            formObj.submit();
+        });
+        $("#viewQna").on("change", function () {
+            $.ajax({
+                type: 'get',
+                url: '/qna/getListQnaByRegdate',
+                data: {userId: [[${user.userId}]], cnt: $(this).val()},
+                dataType:'json',
+                success: function (qnas) {
+                    console.log(qnas);
+                    var str = "";
+                    var qna;
+                    for(var i = 0; i < qnas.length; i++){
+                        qna = qnas[i];
+                        str += "<tr>" +
+                            "<td>"+ qna.qno+" </td>" +
+                            "<td>"+ (qna.qnaKinds=='답글'?'--':'')+qna.qnaKinds+" </td>" +
+                            "<td>"+ qna.title+" </td>" +
+                            "<td>"+ qna.qhit+" </td>" +
+                            "<td>"+ qna.writer+" </td>" +
+                            "<td>"+ formatDate(qna.regdate)+" </td>" +
+                            "</tr>";
+                    }
+                    $("#tbody").html(str);
+                },error:function () {
+                    alert("fail");
+                }
+            });
+        });
+        function formatDate(timeValue){
+            var date = new Date(timeValue);
+            return  date.getFullYear()
+                + "-" + (date.getMonth()+1 >= 10?date.getMonth()+1 : '0'+ (date.getMonth()+1)  )
+                + "-" + (date.getDate()<10?"0":"")+date.getDate()
+        }
+    });
+</script>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<th:block th:insert="~{fragment/header::header}"></th:block>
+<style>
+    .checkout_details_area input{
+        height: 35px;
+        font-size: 18px;
+    }
+</style>
+<div class="cart-table-area section-padding-100">
+    <div class="container-fluid">
+        <div class="checkout_details_area row">
+            <div class="col-12 col-lg-8">
+                <p style="font-size: 30px; color: orange;"><ins>주문상세내역</ins></p>
+                <div class="row">
+                    <div class="cart-summary col-12">
+                        <h5>전체 가격</h5>
+                        <ul class="summary-table">
+                            <li><span>상품 전체 가격:</span> <span id="amount" style="color: #fbb710;line-height: 1;"></span></li>
+                            <li><span>포인트 사용:</span> <span id="point" style="color: #fbb710;line-height: 1;"></span></li>
+                            <li><span>결제 가격:</span> <span id="total" style="color: #fbb710;line-height: 1;"></span></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4 pb-5">
+                        <label>받는 사람</label>
+                        <input type="text" class="form-control name" th:value="${user.userName}" readonly>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label>핸드폰 번호</label>
+                        <input type="text" class="form-control phone" th:value="${user.userPhone}" readonly>
+                    </div>
+
+                    <div class="col-3 mb-3">
+                        <label>배송지 주소</label>
+                        <input class="form-control postNum"  type="text" th:value="${order.destPostNum}" readonly>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <input class="form-control addr1" th:value="${order.destAddr}" type="text" readonly />
+                    </div>
+                    <div class="col-12 mb-5">
+                        <label>배송시 요청사항</label>
+                        <input class="form-control addr1" th:value="${order.deliRequests}" type="text" readonly />
+                    </div>
+
+                    <div class="cart-table clearfix">
+                        <table class="table table-responsive pt-5">
+                            <thead class="pt-5">
+                            <tr style="text-align: center">
+                                <th width="200px"></th>
+                                <th width="240px" style="font-size: 16px">상품이름</th>
+                                <th width="150px"style="font-size: 16px;">가격</th>
+                                <th width="60px" style="font-size: 16px;">갯수</th>
+                                <th width="150px" style="font-size: 16px;">총합</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr style="text-align: center" th:each="orderProduct:${products}" th:with="product=${orderProduct.product},i=${orderProductStat.index}">
+                                <td class="cart_product_img" th:id="${'pno'+i}" th:data-pno="${product.pno}">
+                                    <a th:href="@{/product/view(pno=${product.pno})}"><img th:src="@{/files/display(fileName=${product.mainPic})}" alt="Product"></a>
+                                </td>
+                                <td style="vertical-align: middle;" class="cart_product_desc">
+                                    <h5 id="productName" style="color:gray">[[${product.name}]]</h5>
+                                </td>
+                                <td style="vertical-align: middle;" class="price">
+                                    <span style="color: #fbb710;line-height: 1;" th:id="${'price'+i}" th:value="${product.price}"></span>
+                                </td>
+                                <td style="vertical-align: middle; text-align: center" class="qty">
+                                    <div class="qty-btn d-flex">
+                                        <span th:id="${'count'+i}">[[${orderProduct.count}]]</span>
+                                    </div>
+                                </td>
+                                <td style="vertical-align: middle;" class="price">
+                                    <span style="color: #fbb710;line-height: 1;" th:id="${'priceAmount'+i}" th:value="${(orderProduct.count)*(product.price)}"></span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<th:block th:insert="~{fragment/footer::footer}"></th:block>
+<script th:inline="javascript">
+    var amount=numberWithCommas([[${order.totalPrice+order.point}]]);
+    $("#amount").text(amount+" ￦");
+
+    var point=numberWithCommas([[${order.point}]]);
+    $("#point").text(point+" ￦");
+
+    var total=numberWithCommas([[${order.totalPrice}]]);
+    $("#total").text(total+" ￦");
+
+    var size=[[${products.size()}]];
+    for(var i=0;i<size;i++){
+        var price=numberWithCommas($("#price"+i).attr("value"));
+        $("#price"+i).text(price+" ￦");
+        var priceAmount=numberWithCommas($("#priceAmount"+i).attr("value"));
+        $("#priceAmount"+i).text(priceAmount+" ￦");
+
+    }
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+</script>

@@ -33,6 +33,7 @@ public class CartController {
             Product product=cart.getProduct();
             amount.addAndGet(product.getPrice()*cart.getCount());
         });
+        model.addAttribute("user",user);
         model.addAttribute("carts",carts);
         model.addAttribute("amount",amount);
     }

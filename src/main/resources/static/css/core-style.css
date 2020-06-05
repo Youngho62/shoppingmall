@@ -449,7 +449,8 @@ img {
       margin-bottom: 100px;
       display: block; }
     .main-content-wrapper .header-area .amado-nav li a {
-      font-size: 14px;
+      font-size: 20px;
+      font-weight: bold;
       text-transform: uppercase;
       position: relative;
       z-index: 1;
