@@ -19,6 +19,6 @@ public class HomeController {
     public String index(Model model){
         List<Product> products=productRepository.findAllSortByPHit(11);
         model.addAttribute("products",products);
-        return "/index";
+        return "index";
     }
 }

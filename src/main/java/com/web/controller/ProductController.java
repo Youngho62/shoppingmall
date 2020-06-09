@@ -61,7 +61,7 @@ public class ProductController {
                 productFiles.setProduct(product);
                 //메인 파일을 선택했으면 저장
                 if (productFiles.isMainPic()) {
-                    product.setMainPic(productFiles.getUploadUrl() + "\\" + productFiles.getUuid() + "_" + productFiles.getFileName());
+                    product.setMainPic(productFiles.getUploadUrl() + "/" + productFiles.getUuid() + "_" + productFiles.getFileName());
                     cnt.addAndGet(1);
                 }
                 ;
@@ -94,6 +94,9 @@ public class ProductController {
                 productFilesRepository.deleteAllByProduct(origin);
                 product.getFiles().forEach(file->{
                     file.setProduct(product);
+                    if(file.isMainPic()){
+                        origin.setMainPic(file.getUploadUrl() + "/" + file.getUuid() + "_" + file.getFileName());
+                    }
                     productFilesRepository.save(file);
                 });
             }

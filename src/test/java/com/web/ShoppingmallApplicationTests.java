@@ -1,7 +1,6 @@
 package com.web;
 
 import com.web.domain.Product;
-import com.web.domain.ProductFiles;
 import com.web.domain.QnA;
 import com.web.repository.ProductFilesRepository;
 import com.web.repository.ProductRepository;
@@ -18,8 +17,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
@@ -55,7 +52,10 @@ class ShoppingmallApplicationTests {
     }
     @Test
     public void assas(){
-
+        productRepository.findAll().forEach(product -> {
+            product.setMainPic(product.getMainPic().replace("\\","/"));
+            productRepository.save(product);
+        });
     }
     @Test
     public void testList1() {

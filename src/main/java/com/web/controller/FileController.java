@@ -41,7 +41,7 @@ public class FileController {
     public List<ProductFiles> uploadAjaxPost(MultipartFile[] uploadFile) {
 
         List<ProductFiles> list = new ArrayList<>();
-        String uploadFolder = "C:\\upload\\product\\";
+        String uploadFolder = "/home/ubuntu/apps/upload/product/";
 
         String uploadFolderPath = getFolder();
 
@@ -89,7 +89,7 @@ public class FileController {
     @GetMapping("/display")
     @ResponseBody
     public ResponseEntity<byte[]> getFile(String fileName) {
-        File file = new File("c:\\upload\\product\\" + fileName);
+        File file = new File("/home/ubuntu/apps/upload/product/" + fileName);
         ResponseEntity<byte[]> result = null;
         try {
             HttpHeaders header = new HttpHeaders();
@@ -104,7 +104,7 @@ public class FileController {
     @PostMapping("/delete")
     @ResponseBody
     public String deleteFile(String fileName) {
-        String uploadFolder="C:\\upload\\product\\";
+        String uploadFolder="/home/ubuntu/apps/upload/product/";
 
         try {
             String uploadFileName= (URLDecoder.decode(fileName, "UTF-8")).toString().replace("/","\\");
@@ -125,7 +125,7 @@ public class FileController {
     @DeleteMapping("/delete")
     @ResponseBody
     public String deleteFileDB(String fileName, String type,Long fno) {
-        String uploadFolder="C:\\upload\\product\\";
+        String uploadFolder="/home/ubuntu/apps/upload/product/";
 
         try {
             String uploadFileName= (URLDecoder.decode(fileName, "UTF-8")).toString().replace("/","\\");
