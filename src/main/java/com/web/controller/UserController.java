@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -52,8 +53,8 @@ public class UserController {
     }
 
     @GetMapping("/myPage")
-    public void myPage(Long uNum, Model model){
-        User user=usersRepository.findById(uNum).get();
+    public void myPage(Principal principal, Model model){
+        User user=usersRepository.findUserByUserId(principal.getName());
         List<Order> orders= orderRepository.findAllByUser(user);
         List<QnA> qnas=qnARepository.findAllSortByRegdate(user.getUserId(),5);
         int cnt=qnARepository.findAllCountByWriter(user.getUserId());
@@ -64,8 +65,8 @@ public class UserController {
     }
 
     @GetMapping("modify")
-    public void modify(Long uNum, Model model){
-        User user=usersRepository.findById(uNum).get();
+    public void modify(Principal principal, Model model){
+        User user=usersRepository.findUserByUserId(principal.getName());
         model.addAttribute("user",user);
     }
     @PostMapping("modify")

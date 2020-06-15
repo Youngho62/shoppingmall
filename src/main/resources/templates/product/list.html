@@ -86,7 +86,7 @@
                             <div class="cart">
                                 <p class="mb-0" >[[${product.pHit+' view'}]]</p>
                                 <a sec:authorize="isAuthenticated()" class="addCart mt-0" th:data-pno="${product.pno}"
-                                   style="color: grey" th:href="@{/cart/list(uNum=${#authentication.principal.uNum})}"
+                                   style="color: grey" href="/cart/list"
                                    data-toggle="tooltip" data-placement="left" title="Add to Cart">
                                     <img src="/img/core-img/cart.png" alt=""><br>Add</a>
                                 <a sec:authorize="isAnonymous()" class="addCart mt-0" th:data-pno="${product.pno}"

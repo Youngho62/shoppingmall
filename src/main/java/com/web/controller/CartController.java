@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,8 +26,8 @@ public class CartController {
     private UsersRepository usersRepository;
 
     @GetMapping("/list")
-    public void list(Long uNum,Model model){
-        User user=usersRepository.findById(uNum).get();
+    public void list(Principal principal, Model model){
+        User user=usersRepository.findUserByUserId(principal.getName());
         List<Cart> carts=cartRepository.findAllByUser(user);
         AtomicInteger amount= new AtomicInteger();
         carts.forEach(cart -> {

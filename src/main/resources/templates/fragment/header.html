@@ -75,12 +75,12 @@
                 <ul id="navbar">
                     <li><a href="/">Home</a></li>
                     <li><a href="/product/list?keyword=">상품</a></li>
-                    <li sec:authorize="isAuthenticated()"><a th:href="@{/cart/list(uNum=${#authentication.principal.uNum})}">장바구니</a></li>
+                    <li sec:authorize="isAuthenticated()"><a href="/cart/list">장바구니</a></li>
                     <li sec:authorize="isAnonymous()"><a href="/users/loginForm">장바구니</a></li>
                     <li><a href="/qna/list">QnA</a></li>
                     <li sec:authorize="isAnonymous()"><a href="/users/loginForm">로그인</a></li>
                     <li sec:authorize="isAnonymous()"><a href="/users/signUp">회원가입</a></li>
-                    <li sec:authorize="isAuthenticated()"><a th:href="@{/users/myPage(uNum=${#authentication.principal.uNum})}">마이페이지</a></li>
+                    <li sec:authorize="isAuthenticated()"><a href="/users/myPage">마이페이지</a></li>
                     <li sec:authorize="isAuthenticated()">
                         <a href="#" onclick="document.getElementById('logout-form').submit();">로그아웃</a>
                         <form id="logout-form" action="/logout" method="POST">
